@@ -12,3 +12,63 @@ body {
 .fade {
   opacity: 0.5;
 }
+
+.primaryBtn {
+  outline: none;
+  border: 1px solid #000;
+  color: #fff;
+  background: #000;
+  border-radius: 6px;
+  padding: 0.5rem 1.5rem;
+  cursor: pointer !important;
+  transition: all 0.3s ease-in-out;
+
+  &:hover {
+    box-shadow: 5px 5px 0px #3a3a3a;
+  }
+}
+
+.secondaryBtn {
+  @extend .primaryBtn;
+
+  background: #fff;
+  color: #000;
+}
+
+.flex {
+  display: flex;
+}
+
+.justifyBetween {
+  justify-content: space-between;
+}
+
+.justifyCenter {
+  justify-content: center;
+}
+
+.justifyAround {
+  justify-content: space-around;
+}
+
+.justifyEnd {
+  justify-content: flex-end;
+}
+
+.alignCenter {
+  align-items: center;
+}
+
+.alignEnd {
+  align-items: flex-end;
+}
+
+.gap10 {
+  gap: 10px;
+}
+.gap5 {
+  gap: 5px;
+}
+.relative {
+  position: relative;
+}

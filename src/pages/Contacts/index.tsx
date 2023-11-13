@@ -17,12 +17,20 @@ import { Key, useEffect, useState } from "react";
 import { IGlobalStore, useGlobalStore } from "store/globalStore";
 import styles from "./index.module.scss";
 import telegram from "@images/telegram.png";
+import { useDisclosure } from "hooks/useDisclosure";
+import { ContactTypes } from "constants/contactTypes";
+import ModalEditContacts from "components/ModalEditContacts";
 
 export default function Contacts() {
   const getContacts = useGlobalStore(
     (state: IGlobalStore) => state.getContacts
   );
   const [listContacts, setListContacts] = useState<IContactInTable[]>([]);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
+  const [selectedRow, setSelectedRow] = useState<IContactInTable>(
+    {} as IContactInTable
+  );
+  const modalEditContacts = useDisclosure();
   const columns = [
     {
       title: "Type",
@@ -31,24 +39,24 @@ export default function Contacts() {
       render: (text: string, record: IContactInTable) => {
         let icon;
         switch (text) {
-          case "hotline":
+          case ContactTypes.HOTLINE:
             icon = <PhoneOutlined />;
             break;
-          case "whats_app":
+          case ContactTypes.WHATS_APP:
             icon = <WhatsAppOutlined />;
             break;
-          case "email_support":
+          case ContactTypes.EMAIL_SUPPORT:
             icon = <MailOutlined />;
             break;
-          case "telegram":
+          case ContactTypes.TELEGRAM:
             icon = (
               <img src={telegram} alt="telegram" className={styles.telegram} />
             );
             break;
-          case "address":
+          case ContactTypes.ADDRESS:
             icon = <EnvironmentOutlined />;
             break;
-          case "skype":
+          case ContactTypes.SKYPE:
             icon = <SkypeOutlined />;
             break;
           default:
@@ -88,7 +96,6 @@ export default function Contacts() {
       dataIndex: "action",
       key: "action",
       render: (_: unknown, record: unknown) => {
-        console.log(record);
         return (
           <div className={styles.action}>
             <Space>
@@ -104,14 +111,19 @@ export default function Contacts() {
               >
                 <DeleteOutlined className={styles.icon} />
               </Popconfirm>
-              <EditOutlined className={styles.icon} />
+              <EditOutlined
+                className={styles.icon}
+                onClick={() => {
+                  setSelectedRow(record as IContactInTable);
+                  modalEditContacts.handleOpen(true);
+                }}
+              />
             </Space>
           </div>
         );
       },
     },
   ];
-  const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
   const onSelectChange = (newSelectedRowKeys: Key[]) => {
     console.log("selectedRowKeys changed: ", newSelectedRowKeys);
     setSelectedRowKeys(newSelectedRowKeys);
@@ -121,23 +133,24 @@ export default function Contacts() {
     selectedRowKeys,
     onChange: onSelectChange,
   };
-  useEffect(() => {
-    Promise.resolve(getContacts())
-      .then((res: IResponseDataStatus) => {
-        const dataListContact: IContact[] = res.data as IContact[];
-        setListContacts(
-          dataListContact.map((item: IContact) => {
-            return {
-              _id: item._id,
-              key: item._id,
-              type: item.type,
-              amount: item.values.length,
-              date: item.updated_at,
-            };
-          })
-        );
+  const fetchApi = async () => {
+    const res: IResponseDataStatus = await getContacts();
+    const dataListContact: IContact[] = res.data as IContact[];
+    setListContacts(
+      dataListContact.map((item: IContact) => {
+        return {
+          _id: item._id,
+          key: item._id,
+          type: item.type,
+          amount: item.values.length,
+          date: item.updated_at,
+          values: item.values,
+        };
       })
-      .catch(console.log);
+    );
+  };
+  useEffect(() => {
+    fetchApi().catch(console.log);
   }, []);
 
   return (
@@ -148,6 +161,12 @@ export default function Contacts() {
         // @ts-ignore
         columns={columns}
         rowSelection={rowSelection}
+      />
+      <ModalEditContacts
+        isOpen={modalEditContacts.isOpen}
+        handleOpen={modalEditContacts.handleOpen}
+        selectedRow={selectedRow}
+        callApi={fetchApi}
       />
     </div>
   );

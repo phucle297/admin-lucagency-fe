@@ -8,8 +8,10 @@ export interface IContact {
 }
 
 export interface IContactInTable {
+  _id?: string;
   key: string;
   amount: number;
   type: string;
   date: string;
+  values?: unknown[];
 }
