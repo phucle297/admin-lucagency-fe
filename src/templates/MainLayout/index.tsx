@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import avatar from "@images/avatar.png";
 import logo from "@images/logo.png";
