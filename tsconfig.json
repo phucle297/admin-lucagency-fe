@@ -19,14 +19,15 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-
     "baseUrl": "./src",
     "rootDir": "./src",
     "paths": {
-      "@scenes/*": ["scenes/*"],
+      "@templates/*": ["templates/*"],
       "@styles/*": ["styles/*"],
-      "@pages/*": ["pages/*"]
+      "@pages/*": ["pages/*"],
+      "@images/*": ["assets/images/*"]
     },
+    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true
   },
   "include": ["src"],
