@@ -1,14 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { IContact } from "@interfaces/contacts.interface";
 import { IProduct } from "@interfaces/products.interface";
+import { IUser } from "@interfaces/users.interface";
 import { IResponseDataStatus } from "@interfaces/utils.interface";
 import { ContactsService } from "@services/contacts.service";
 import { ProductsService } from "@services/product.service";
+import { UsersService } from "@services/users.service";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 export interface IGlobalStore {
   contacts: IContact[];
+  users: IUser[];
   products: IProduct[];
   getContacts: () => Promise<IResponseDataStatus>;
   updateContacts: (
@@ -19,10 +22,16 @@ export interface IGlobalStore {
   createProduct: (body: IProduct) => Promise<IResponseDataStatus>;
   deleteProduct: (listProductIds: string[]) => Promise<IResponseDataStatus>;
   updateProduct: (productId: string, { ...params }) => Promise<any>;
+  getUsers: (
+    page: number,
+    limit: number,
+    role?: string
+  ) => Promise<IResponseDataStatus>;
 }
 export const useGlobalStore = create(
   persist<IGlobalStore>(
     (set) => ({
+      users: [],
       contacts: [],
       products: [],
       getContacts: async () => {
@@ -81,6 +90,11 @@ export const useGlobalStore = create(
           });
           return { ...state, products };
         });
+        return res;
+      },
+      getUsers: async (page: number, limit: number, role?: string) => {
+        const res = await UsersService.getUsers(page, limit, role);
+        set({ products: res.data });
         return res;
       },
     }),

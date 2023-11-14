@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import axios from "axios";
 
 const DEFAULT_CONFIG_AXIOS = {
@@ -19,7 +20,9 @@ function getAxiosInstance() {
     },
     function (error) {
       const response = error.response;
-      const errorMessage = response?.data?.message;
+      // @ts-ignore
+      const errorMessage = response?.data?.errors?.join(",");
+      const code = response?.data?.code;
       const statusCode = response?.data?.statusCode || response?.status;
 
       if (errorMessage === "invalid token" || statusCode === 401) {
@@ -27,7 +30,7 @@ function getAxiosInstance() {
         console.log(`Redirect to login page`);
       }
 
-      throw { message: errorMessage, statusCode: statusCode };
+      throw { message: errorMessage, statusCode: statusCode, code };
     }
   );
 
