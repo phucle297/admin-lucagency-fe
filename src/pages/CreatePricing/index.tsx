@@ -58,12 +58,12 @@ export default function CreatePricing() {
             ProductsService.uploadProductImage(productId, file);
           });
         }
+        void message.success("Create product successfully!");
       } catch (error) {
         console.log(error);
         // @ts-ignore
         void message.error(error?.message || "Something went wrong!");
       } finally {
-        void message.success("Create product successfully!");
         navigate("/pricing");
         formik.resetForm();
       }

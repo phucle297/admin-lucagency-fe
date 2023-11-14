@@ -74,14 +74,14 @@ export default function EditPricing() {
             ProductsService.uploadProductImage(productId, file);
           });
         }
+        void message.success("Update product successfully!");
       } catch (error) {
         console.log(error);
         // @ts-ignore
         void message.error(error?.message || "Something went wrong!");
       } finally {
-        // void message.success("Update product successfully!");
-        // navigate("/pricing");
-        // formik.resetForm();
+        navigate("/pricing");
+        formik.resetForm();
       }
     },
   });
