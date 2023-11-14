@@ -1,10 +1,10 @@
 import { EyeInvisibleOutlined, EyeOutlined } from "@ant-design/icons";
 import logo from "@images/logo.png";
 import { Form, Input, message } from "antd";
-import { LocalStorageKeys } from "constants/localStorageKeys";
+import { LocalStorageKeys } from "@constants/localStorageKeys";
 import { useFormik } from "formik";
 import { useState } from "react";
-import { AuthService } from "services/auth.service";
+import { AuthService } from "@services/auth.service";
 import * as Yup from "yup";
 import styles from "./index.module.scss";
 

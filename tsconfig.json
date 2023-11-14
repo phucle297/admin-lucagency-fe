@@ -25,7 +25,14 @@
       "@templates/*": ["templates/*"],
       "@styles/*": ["styles/*"],
       "@pages/*": ["pages/*"],
-      "@images/*": ["assets/images/*"]
+      "@images/*": ["assets/images/*"],
+      "@interfaces/*": ["interfaces/*"],
+      "@components/*": ["components/*"],
+      "@utils/*": ["utils/*"],
+      "@hooks/*": ["hooks/*"],
+      "@constants/*": ["constants/*"],
+      "@services/*": ["services/*"],
+      "@stores/*": ["stores/*"]
     },
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true

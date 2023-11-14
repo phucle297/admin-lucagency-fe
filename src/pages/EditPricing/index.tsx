@@ -5,13 +5,13 @@ import { CheckCircleFilled, UploadOutlined } from "@ant-design/icons";
 import { Col, Form, Input, Row, Select, UploadProps, message } from "antd";
 import { RcFile } from "antd/es/upload";
 import Dragger from "antd/es/upload/Dragger";
-import { CategoryEnum } from "constants/category";
-import { NationEnum } from "constants/nation";
+import { CategoryEnum } from "@constants/category";
+import { NationEnum } from "@constants/nation";
 import { useFormik } from "formik";
-import { IProductImage } from "interfaces/products.interface";
+import { IProductImage } from "@interfaces/products.interface";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ProductsService } from "services/product.service";
+import { ProductsService } from "@services/product.service";
 import styles from "./index.module.scss";
 
 export default function EditPricing() {

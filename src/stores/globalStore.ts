@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { IContact } from "interfaces/contacts.interface";
-import { IProduct } from "interfaces/products.interface";
-import { IResponseDataStatus } from "interfaces/utils.interface";
-import { ContactsService } from "services/contacts.service";
-import { ProductsService } from "services/product.service";
+import { IContact } from "@interfaces/contacts.interface";
+import { IProduct } from "@interfaces/products.interface";
+import { IResponseDataStatus } from "@interfaces/utils.interface";
+import { ContactsService } from "@services/contacts.service";
+import { ProductsService } from "@services/product.service";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 

@@ -1,5 +1,12 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable react-hooks/exhaustive-deps */
+import { nanoid } from "nanoid";
+import { IGlobalStore, useGlobalStore } from "@stores/globalStore";
+import styles from "./index.module.scss";
+import { useEffect, useState } from "react";
+import { IContact, IContactInTable } from "@interfaces/contacts.interface";
+import { useDisclosure } from "@hooks/useDisclosure";
+import { ContactTypes } from "@constants/contactTypes";
 import {
   EditOutlined,
   EnvironmentOutlined,
@@ -10,16 +17,9 @@ import {
 } from "@ant-design/icons";
 import telegram from "@images/telegram.png";
 import { Space, Switch, Table, message } from "antd";
-import ModalEditContacts from "components/ModalEditContacts";
-import { ContactTypes } from "constants/contactTypes";
 import dayjs from "dayjs";
-import { useDisclosure } from "hooks/useDisclosure";
-import { IContact, IContactInTable } from "interfaces/contacts.interface";
-import { IResponseDataStatus } from "interfaces/utils.interface";
-import { nanoid } from "nanoid";
-import { useEffect, useState } from "react";
-import { IGlobalStore, useGlobalStore } from "store/globalStore";
-import styles from "./index.module.scss";
+import { IResponseDataStatus } from "@interfaces/utils.interface";
+import ModalEditContacts from "@components/ModalEditContacts";
 
 export default function Contacts() {
   const getContacts = useGlobalStore(

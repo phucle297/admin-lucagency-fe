@@ -10,7 +10,7 @@ import {
   SkypeOutlined,
   WhatsAppOutlined,
 } from "@ant-design/icons";
-import { useGlobalStore } from "store/globalStore";
+import { useGlobalStore } from "@stores/globalStore";
 import { ContactTypes } from "constants/contactTypes";
 import telegram from "@images/telegram.png";
 

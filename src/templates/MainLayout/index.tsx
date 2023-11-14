@@ -14,8 +14,8 @@ import { Button, Dropdown, Layout, Menu } from "antd";
 import { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import styles from "./index.module.scss";
-import { useWidth } from "hooks/useWidth";
-import { AuthService } from "services/auth.service";
+import { useWidth } from "@hooks/useWidth";
+import { AuthService } from "@services/auth.service";
 
 export default function MainLayout() {
   const [collapsed, setCollapsed] = useState<boolean>(false);

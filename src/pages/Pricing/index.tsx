@@ -10,7 +10,7 @@ import { IProduct, IProductInTable } from "interfaces/products.interface";
 import { IResponseDataStatus } from "interfaces/utils.interface";
 import { Key, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { IGlobalStore, useGlobalStore } from "store/globalStore";
+import { IGlobalStore, useGlobalStore } from "@stores/globalStore";
 import styles from "./index.module.scss";
 
 export default function Pricing() {
