@@ -526,6 +526,7 @@ export default function Posts() {
               ...params,
               page,
             });
+            // @ts-ignore
             fetchApi({ ...params, page }).catch(console.log);
           },
         }}

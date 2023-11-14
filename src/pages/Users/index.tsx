@@ -23,15 +23,6 @@ export default function Users() {
   const [listUsers, setListUsers] = useState<IUser[]>([]);
   const columns = [
     {
-      title: "Username",
-      dataIndex: "email",
-      key: "username",
-      width: 250,
-      render: (text: string) => {
-        return <p style={{ fontWeight: "bold" }}>{text}</p>;
-      },
-    },
-    {
       title: "Name",
       dataIndex: "name",
       key: "name",
