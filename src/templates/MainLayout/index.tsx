@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import styles from "./index.module.scss";
 import { useWidth } from "hooks/useWidth";
+import { AuthService } from "services/auth.service";
 
 export default function MainLayout() {
   const [collapsed, setCollapsed] = useState<boolean>(false);
@@ -24,14 +25,14 @@ export default function MainLayout() {
   const items: MenuProps["items"] = [
     {
       label: (
-        <span
+        <p
           onClick={() => {
-            localStorage.removeItem("token");
+            AuthService.logout();
             navigate("/login");
           }}
         >
           Sign out
-        </span>
+        </p>
       ),
       key: "signout",
     },
