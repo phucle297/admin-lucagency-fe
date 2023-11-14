@@ -6,6 +6,7 @@ import CreatePricing from "@pages/CreatePricing";
 import EditPricing from "@pages/EditPricing";
 import Login from "@pages/Login";
 import Users from "@pages/Users";
+import CreateUser from "@pages/CreateUser";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
             <Route path="pricing/create" element={<CreatePricing />} />
             <Route path="pricing/edit/:id" element={<EditPricing />} />
             <Route path="users" element={<Users />} />
+            <Route path="users/create" element={<CreateUser />} />
 
             <Route path="*" element={<div>Not found</div>} />
           </Route>

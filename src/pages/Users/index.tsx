@@ -74,18 +74,18 @@ export default function Users() {
           <div className={styles.action}>
             <Space>
               <Popconfirm
-                title="Delete pricing"
-                description="Are you sure to delete this pricing?"
+                title="Delete user"
+                description="Are you sure to delete this user?"
                 onConfirm={async () => {
                   try {
                     // @ts-ignore
                     const users = [record._id];
                     await UsersService.deleteUsers(users);
-                    message.success("Delete pricing successfully");
+                    message.success("Delete user successfully");
                     fetchApi(page, 10);
                   } catch (error) {
                     console.log(error);
-                    message.success("Delete pricing failed");
+                    message.success("Delete user failed");
                   }
                 }}
                 onCancel={() => {}}
@@ -208,20 +208,21 @@ export default function Users() {
         )}
         <div className={styles.controls}>
           <Popconfirm
-            title="Delete pricing"
+            title="Delete users"
             description="Are you sure to delete?"
             onConfirm={() => {
-              console.log(selectedRowKeys);
-              // Promise.resolve(deleteProduct(selectedRowKeys as string[]))
-              //   .then(() => {
-              //     void message.success("Delete pricing successfully");
-              //     fetchApi(page, 10);
-              //     setSelectedRowKeys([]);
-              //   })
-              //   .catch((error) => {
-              //     console.log(error);
-              //     message.error("Delete pricing failed");
-              //   });
+              Promise.resolve(
+                UsersService.deleteUsers(selectedRowKeys as string[])
+              )
+                .then(() => {
+                  void message.success("Delete users successfully");
+                  fetchApi(page, 10);
+                  setSelectedRowKeys([]);
+                })
+                .catch((error) => {
+                  console.log(error);
+                  message.error("Delete users failed");
+                });
             }}
             disabled={selectedRowKeys.length === 0}
             onCancel={() => {}}
@@ -241,7 +242,7 @@ export default function Users() {
           <button
             className="primaryBtn"
             onClick={() => {
-              navigate("/user/create");
+              navigate("/users/create");
             }}
           >
             Add new user

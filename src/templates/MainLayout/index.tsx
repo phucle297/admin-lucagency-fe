@@ -51,7 +51,7 @@ export default function MainLayout() {
         collapsed={collapsed}
         style={{
           height: "100vh",
-          position: "static",
+          position: "sticky",
           left: 0,
           top: 0,
           bottom: 0,
