@@ -10,7 +10,7 @@ export interface IGlobalStore {
   getContacts: () => Promise<IResponseDataStatus>;
   updateContacts: (
     contactId: string,
-    values: any[]
+    { ...params }
   ) => Promise<IResponseDataStatus>;
 }
 export const useGlobalStore = create(
@@ -22,12 +22,14 @@ export const useGlobalStore = create(
         set({ contacts: response.data });
         return response;
       },
-      updateContacts: async (contactId: string, values: any[]) => {
-        const res = await ContactsService.updateContacts(contactId, values);
+      updateContacts: async (contactId: string, { ...params }) => {
+        const res = await ContactsService.updateContacts(contactId, {
+          ...params,
+        });
         set((state) => {
           const contacts = state.contacts.map((contact) => {
             if (contact._id === contactId) {
-              return { ...contact, values };
+              return { ...contact, ...params };
             }
             return contact;
           });

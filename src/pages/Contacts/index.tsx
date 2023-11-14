@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable react-hooks/exhaustive-deps */
 import {
-  DeleteOutlined,
   EditOutlined,
   EnvironmentOutlined,
   MailOutlined,
@@ -9,24 +8,27 @@ import {
   SkypeOutlined,
   WhatsAppOutlined,
 } from "@ant-design/icons";
-import { Popconfirm, Space, Table, message } from "antd";
+import telegram from "@images/telegram.png";
+import { Space, Switch, Table, message } from "antd";
+import ModalEditContacts from "components/ModalEditContacts";
+import { ContactTypes } from "constants/contactTypes";
 import dayjs from "dayjs";
+import { useDisclosure } from "hooks/useDisclosure";
 import { IContact, IContactInTable } from "interfaces/contacts.interface";
 import { IResponseDataStatus } from "interfaces/utils.interface";
-import { Key, useEffect, useState } from "react";
+import { nanoid } from "nanoid";
+import { useEffect, useState } from "react";
 import { IGlobalStore, useGlobalStore } from "store/globalStore";
 import styles from "./index.module.scss";
-import telegram from "@images/telegram.png";
-import { useDisclosure } from "hooks/useDisclosure";
-import { ContactTypes } from "constants/contactTypes";
-import ModalEditContacts from "components/ModalEditContacts";
 
 export default function Contacts() {
   const getContacts = useGlobalStore(
     (state: IGlobalStore) => state.getContacts
   );
+  const updateContacts = useGlobalStore(
+    (state: IGlobalStore) => state.updateContacts
+  );
   const [listContacts, setListContacts] = useState<IContactInTable[]>([]);
-  const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
   const [selectedRow, setSelectedRow] = useState<IContactInTable>(
     {} as IContactInTable
   );
@@ -95,22 +97,11 @@ export default function Contacts() {
       title: "Action",
       dataIndex: "action",
       key: "action",
+      align: "center",
       render: (_: unknown, record: unknown) => {
         return (
           <div className={styles.action}>
             <Space>
-              <Popconfirm
-                title="Delete contacts?"
-                description="Are you sure to delete all the contacts of this type?"
-                onConfirm={() => {
-                  void message.success("Deleted successfully");
-                }}
-                onCancel={() => {}}
-                okText="Yes"
-                cancelText="No"
-              >
-                <DeleteOutlined className={styles.icon} />
-              </Popconfirm>
               <EditOutlined
                 className={styles.icon}
                 onClick={() => {
@@ -123,16 +114,32 @@ export default function Contacts() {
         );
       },
     },
+    {
+      title: "Display",
+      dataIndex: "display",
+      key: "display",
+      render: (_: string, record: IContactInTable) => {
+        return (
+          <Switch
+            defaultChecked={record.display}
+            onChange={() => {
+              updateContacts(record._id as string, {
+                display: !record.display,
+              })
+                .then(() => {
+                  void message.success("Update display successfully");
+                  fetchApi().catch(console.log);
+                })
+                .catch((error) => {
+                  void message.error(error.message);
+                });
+            }}
+          />
+        );
+      },
+    },
   ];
-  const onSelectChange = (newSelectedRowKeys: Key[]) => {
-    console.log("selectedRowKeys changed: ", newSelectedRowKeys);
-    setSelectedRowKeys(newSelectedRowKeys);
-  };
 
-  const rowSelection = {
-    selectedRowKeys,
-    onChange: onSelectChange,
-  };
   const fetchApi = async () => {
     const res: IResponseDataStatus = await getContacts();
     const dataListContact: IContact[] = res.data as IContact[];
@@ -145,6 +152,7 @@ export default function Contacts() {
           amount: item.values.length,
           date: item.updated_at,
           values: item.values,
+          display: item.display,
         };
       })
     );
@@ -152,15 +160,63 @@ export default function Contacts() {
   useEffect(() => {
     fetchApi().catch(console.log);
   }, []);
-
+  const expandedRowRender = (record: IContactInTable) => {
+    const columns = [
+      {
+        title: "Type",
+        dataIndex: "type",
+        key: "type",
+        width: 200,
+        render: (type: string) => {
+          switch (type) {
+            case ContactTypes.HOTLINE:
+              return <PhoneOutlined />;
+            case ContactTypes.WHATS_APP:
+              return <WhatsAppOutlined />;
+            case ContactTypes.EMAIL_SUPPORT:
+              return <MailOutlined />;
+            case ContactTypes.TELEGRAM:
+              return (
+                <img
+                  src={telegram}
+                  alt="telegram"
+                  className={styles.telegram}
+                />
+              );
+            case ContactTypes.ADDRESS:
+              return <EnvironmentOutlined />;
+            case ContactTypes.SKYPE:
+              return <SkypeOutlined />;
+            default:
+              return null;
+          }
+        },
+      },
+      { title: "Values", dataIndex: "value", key: "value" },
+    ];
+    const data = [];
+    // @ts-ignore
+    for (let i = 0; i < record?.values?.length; ++i) {
+      if (record?.values?.[i] && record?.values) {
+        data.push({
+          key: nanoid(),
+          type: record.type,
+          value: record?.values[i],
+        });
+      }
+    }
+    return <Table columns={columns} dataSource={data} pagination={false} />;
+  };
   return (
     <div className={styles.wrapper}>
       <h1>Contacts</h1>
       <Table
+        pagination={false}
+        scroll={{ x: 500 }}
         dataSource={listContacts}
         // @ts-ignore
         columns={columns}
-        rowSelection={rowSelection}
+        expandable={{ expandedRowRender }}
       />
       <ModalEditContacts
         isOpen={modalEditContacts.isOpen}

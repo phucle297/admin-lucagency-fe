@@ -93,10 +93,9 @@ const ModalEditContacts: FC<IModalEditContactsProps> = ({
             onClick={() => {
               try {
                 Promise.resolve(
-                  updateContacts(
-                    selectedRow?.key,
-                    listContacts?.filter((contact) => contact)
-                  )
+                  updateContacts(selectedRow?.key, {
+                    values: listContacts?.filter((contact) => contact),
+                  })
                 )
                   .then(() => {
                     callApi();

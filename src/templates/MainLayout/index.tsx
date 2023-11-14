@@ -14,11 +14,13 @@ import { Button, Dropdown, Layout, Menu } from "antd";
 import { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import styles from "./index.module.scss";
+import { useWidth } from "hooks/useWidth";
 
 export default function MainLayout() {
   const [collapsed, setCollapsed] = useState<boolean>(false);
   const navigate = useNavigate();
   const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
+  const width = useWidth();
   const items: MenuProps["items"] = [
     {
       label: (
@@ -42,6 +44,7 @@ export default function MainLayout() {
   return (
     <Layout hasSider className={styles.wrapper}>
       <Layout.Sider
+        breakpoint="lg"
         trigger={null}
         collapsible
         collapsed={collapsed}
@@ -52,6 +55,7 @@ export default function MainLayout() {
           top: 0,
           bottom: 0,
         }}
+        width={collapsed ? 80 : width >= 1440 ? 300 : 200}
       >
         <div className={collapsed ? styles.logoCollapsed : styles.logo}>
           <img src={logo} alt="logo" />

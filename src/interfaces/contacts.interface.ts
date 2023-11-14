@@ -14,4 +14,5 @@ export interface IContactInTable {
   type: string;
   date: string;
   values?: unknown[];
+  display?: boolean;
 }

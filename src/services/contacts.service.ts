@@ -6,9 +6,12 @@ export class ContactsService {
     const response = await HttpInterceptor.get("/contacts");
     return response.data;
   }
-  public static async updateContacts(contactId: string, values: any[]) {
+  public static async updateContacts(
+    contactId: string,
+    { ...params }
+  ): Promise<any> {
     const response = await HttpInterceptor.patch(`/contacts/${contactId}`, {
-      values,
+      ...params,
     });
     return response.data;
   }
