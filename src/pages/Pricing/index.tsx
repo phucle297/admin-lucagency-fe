@@ -185,11 +185,10 @@ export default function Pricing() {
       <div className="flex justifyBetween alignCenter">
         <h1>Pricing</h1>
         <div className="flex gap10">
-          <button
-            className={
-              selectedRowKeys.length === 0 ? "disabledBtn" : "primaryBtn"
-            }
-            onClick={() => {
+          <Popconfirm
+            title="Delete pricing"
+            description="Are you sure to delete?"
+            onConfirm={() => {
               console.log(selectedRowKeys);
               Promise.resolve(deleteProduct(selectedRowKeys as string[]))
                 .then(() => {
@@ -203,9 +202,20 @@ export default function Pricing() {
                 });
             }}
             disabled={selectedRowKeys.length === 0}
+            onCancel={() => {}}
+            okText="Yes"
+            cancelText="No"
           >
-            Delete
-          </button>
+            <button
+              className={
+                selectedRowKeys.length === 0 ? "disabledBtn" : "primaryBtn"
+              }
+              disabled={selectedRowKeys.length === 0}
+            >
+              Delete
+            </button>
+          </Popconfirm>
+
           <button
             className="primaryBtn"
             onClick={() => {
