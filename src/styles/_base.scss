@@ -8,6 +8,16 @@ body {
   font-family: "Roboto", sans-serif;
   background-color: #f5f5f5;
 }
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
 
 .fade {
   opacity: 0.5;
@@ -71,4 +81,29 @@ body {
 }
 .relative {
   position: relative;
+}
+.activeBtn {
+  @extend .primaryBtn;
+  background: #efefef;
+  color: #000000a9;
+  border: none;
+  font-weight: semi-bold;
+  &:hover {
+    box-shadow: none;
+  }
+}
+.inactiveBtn {
+  @extend .activeBtn;
+  background: #fff;
+}
+.disabledBtn {
+  @extend .activeBtn;
+  background: #efefef;
+  color: #000000a9;
+  border: none;
+  font-weight: semi-bold;
+  cursor: not-allowed !important;
+  &:hover {
+    box-shadow: none;
+  }
 }

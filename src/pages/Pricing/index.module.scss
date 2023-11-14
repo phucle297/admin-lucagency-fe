@@ -1,0 +1,19 @@
+.wrapper {
+    padding: 1rem;
+    background: #fff;
+    border-radius: 8px;
+
+    h1 {
+        font-weight: 500;
+        line-height: 2;
+        margin-bottom: 1rem;
+    }
+    .icon {
+        cursor: pointer !important;
+    }
+}
+
+.flag {
+    width: 2rem;
+    object-fit: cover;
+}

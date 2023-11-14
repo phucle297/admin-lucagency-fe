@@ -1,22 +1,29 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { IContact } from "interfaces/contacts.interface";
+import { IProduct } from "interfaces/products.interface";
 import { IResponseDataStatus } from "interfaces/utils.interface";
 import { ContactsService } from "services/contacts.service";
+import { ProductsService } from "services/product.service";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 export interface IGlobalStore {
   contacts: IContact[];
+  products: IProduct[];
   getContacts: () => Promise<IResponseDataStatus>;
   updateContacts: (
     contactId: string,
     { ...params }
   ) => Promise<IResponseDataStatus>;
+  getProducts: (page: number, limit: number) => Promise<IResponseDataStatus>;
+  createProduct: (body: IProduct) => Promise<IResponseDataStatus>;
+  deleteProduct: (listProductIds: string[]) => Promise<IResponseDataStatus>;
 }
 export const useGlobalStore = create(
   persist<IGlobalStore>(
     (set) => ({
       contacts: [],
+      products: [],
       getContacts: async () => {
         const response = await ContactsService.getContacts();
         set({ contacts: response.data });
@@ -34,6 +41,29 @@ export const useGlobalStore = create(
             return contact;
           });
           return { ...state, contacts };
+        });
+        return res;
+      },
+      getProducts: async (page: number, limit: number) => {
+        const res = await ProductsService.getProducts(page, limit);
+        set({ products: res.data });
+        return res;
+      },
+      createProduct: async (body: IProduct) => {
+        const res = await ProductsService.createProduct(body);
+        set((state) => {
+          const products = [...state.products, res.data];
+          return { ...state, products };
+        });
+        return res;
+      },
+      deleteProduct: async (listProductIds: string[]) => {
+        const res = await ProductsService.deleteProduct(listProductIds);
+        set((state) => {
+          const products = state.products.filter(
+            (product) => !listProductIds.includes(product._id)
+          );
+          return { ...state, products };
         });
         return res;
       },

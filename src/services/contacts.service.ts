@@ -4,7 +4,7 @@ import HttpInterceptor from "utils/HttpInterceptor";
 export class ContactsService {
   public static async getContacts() {
     const response = await HttpInterceptor.get("/contacts");
-    return response.data;
+    return response;
   }
   public static async updateContacts(
     contactId: string,
