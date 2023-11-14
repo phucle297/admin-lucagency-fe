@@ -7,6 +7,7 @@ import EditPricing from "@pages/EditPricing";
 import Login from "@pages/Login";
 import Users from "@pages/Users";
 import CreateUser from "@pages/CreateUser";
+import Posts from "@pages/Posts";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
             <Route path="pricing/edit/:id" element={<EditPricing />} />
             <Route path="users" element={<Users />} />
             <Route path="users/create" element={<CreateUser />} />
+            <Route path="posts" element={<Posts />} />
 
             <Route path="*" element={<div>Not found</div>} />
           </Route>

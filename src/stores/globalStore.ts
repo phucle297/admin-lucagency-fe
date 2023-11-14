@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { IContact } from "@interfaces/contacts.interface";
+import { IPost } from "@interfaces/posts.interface";
 import { IProduct } from "@interfaces/products.interface";
 import { IUser } from "@interfaces/users.interface";
 import { IResponseDataStatus } from "@interfaces/utils.interface";
 import { ContactsService } from "@services/contacts.service";
+import { PostsService } from "@services/posts.service";
 import { ProductsService } from "@services/product.service";
 import { UsersService } from "@services/users.service";
 import { create } from "zustand";
@@ -13,6 +15,7 @@ export interface IGlobalStore {
   contacts: IContact[];
   users: IUser[];
   products: IProduct[];
+  posts: IPost[];
   getContacts: () => Promise<IResponseDataStatus>;
   updateContacts: (
     contactId: string,
@@ -27,6 +30,15 @@ export interface IGlobalStore {
     limit: number,
     role?: string
   ) => Promise<IResponseDataStatus>;
+  getPosts: (
+    page: number,
+    limit: number,
+    search: string | undefined,
+    state: string | undefined,
+    hot_topic: boolean | undefined,
+    language: string | undefined
+  ) => Promise<IResponseDataStatus>;
+  deletePost: (postId: string) => Promise<IResponseDataStatus>;
 }
 export const useGlobalStore = create(
   persist<IGlobalStore>(
@@ -34,6 +46,7 @@ export const useGlobalStore = create(
       users: [],
       contacts: [],
       products: [],
+      posts: [],
       getContacts: async () => {
         const response = await ContactsService.getContacts();
         set({ contacts: response.data });
@@ -95,6 +108,33 @@ export const useGlobalStore = create(
       getUsers: async (page: number, limit: number, role?: string) => {
         const res = await UsersService.getUsers(page, limit, role);
         set({ products: res.data });
+        return res;
+      },
+      getPosts: async (
+        page: number,
+        limit: number,
+        search: string | undefined,
+        state: string | undefined,
+        hot_topic: boolean | undefined,
+        language: string | undefined
+      ) => {
+        const res = await PostsService.getPosts(
+          page,
+          limit,
+          search,
+          state,
+          hot_topic,
+          language
+        );
+        set({ posts: res.data });
+        return res;
+      },
+      deletePost: async (postId: string) => {
+        const res = await PostsService.deletePostById(postId);
+        set((state) => {
+          const posts = state.posts.filter((post) => post._id !== postId);
+          return { ...state, posts };
+        });
         return res;
       },
     }),

@@ -114,3 +114,14 @@ input[type="number"] {
   margin-top: 0.25rem;
   margin-bottom: 0;
 }
+.tagGreen {
+  background: #ecfdf3;
+  color: #027a48;
+  border-radius: 50px;
+  padding: 0.2rem 0.5rem;
+}
+.tagGray {
+  @extend .tagGreen;
+  color: #000;
+  background: #f2f4f7;
+}
