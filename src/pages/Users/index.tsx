@@ -10,8 +10,10 @@ import { useNavigate } from "react-router-dom";
 import styles from "./index.module.scss";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { UsersService } from "@services/users.service";
+import { useWidth } from "@hooks/useWidth";
 
 export default function Users() {
+  const width = useWidth();
   const [tab, setTab] = useState<string>(UserRolesEnum.ALL);
   const navigate = useNavigate();
   const getUsers = useGlobalStore((state) => state.getUsers);
@@ -142,9 +144,112 @@ export default function Users() {
 
   return (
     <div className={styles.wrapper}>
-      <div className="flex justifyBetween alignCenter">
-        <h1>Users</h1>
-        <div className={"flex justifyAround alignCenter"}>
+      <div className="flex justifyBetween alignCenter gap10">
+        <h1
+          style={{
+            marginBottom: 0,
+          }}
+        >
+          Users
+        </h1>
+        {width >= 1024 && (
+          <div className={styles.tabs}>
+            <button
+              className={
+                tab === UserRolesEnum.ALL ? "activeBtn" : "inactiveBtn"
+              }
+              onClick={() => {
+                setTab(UserRolesEnum.ALL);
+              }}
+            >
+              All users
+            </button>
+            <button
+              className={
+                tab === UserRolesEnum.ACCOUNTANT ? "activeBtn" : "inactiveBtn"
+              }
+              onClick={() => {
+                setTab(UserRolesEnum.ACCOUNTANT);
+              }}
+            >
+              Accountant
+            </button>
+            <button
+              className={
+                tab === UserRolesEnum.SALE ? "activeBtn" : "inactiveBtn"
+              }
+              onClick={() => {
+                setTab(UserRolesEnum.SALE);
+              }}
+            >
+              Sale
+            </button>
+            <button
+              className={
+                tab === UserRolesEnum.SEO ? "activeBtn" : "inactiveBtn"
+              }
+              onClick={() => {
+                setTab(UserRolesEnum.SEO);
+              }}
+            >
+              Seo
+            </button>
+            <button
+              className={
+                tab === UserRolesEnum.CONTENT ? "activeBtn" : "inactiveBtn"
+              }
+              onClick={() => {
+                setTab(UserRolesEnum.CONTENT);
+              }}
+            >
+              Content
+            </button>
+          </div>
+        )}
+        <div className={styles.controls}>
+          <Popconfirm
+            title="Delete pricing"
+            description="Are you sure to delete?"
+            onConfirm={() => {
+              console.log(selectedRowKeys);
+              // Promise.resolve(deleteProduct(selectedRowKeys as string[]))
+              //   .then(() => {
+              //     void message.success("Delete pricing successfully");
+              //     fetchApi(page, 10);
+              //     setSelectedRowKeys([]);
+              //   })
+              //   .catch((error) => {
+              //     console.log(error);
+              //     message.error("Delete pricing failed");
+              //   });
+            }}
+            disabled={selectedRowKeys.length === 0}
+            onCancel={() => {}}
+            okText="Yes"
+            cancelText="No"
+          >
+            <button
+              className={
+                selectedRowKeys.length === 0 ? "disabledBtn" : "primaryBtn"
+              }
+              disabled={selectedRowKeys.length === 0}
+            >
+              Delete
+            </button>
+          </Popconfirm>
+
+          <button
+            className="primaryBtn"
+            onClick={() => {
+              navigate("/user/create");
+            }}
+          >
+            Add new user
+          </button>
+        </div>
+      </div>
+      {width < 1024 && (
+        <div className={styles.tabs}>
           <button
             className={tab === UserRolesEnum.ALL ? "activeBtn" : "inactiveBtn"}
             onClick={() => {
@@ -190,48 +295,7 @@ export default function Users() {
             Content
           </button>
         </div>
-        <div className="flex gap10">
-          <Popconfirm
-            title="Delete pricing"
-            description="Are you sure to delete?"
-            onConfirm={() => {
-              console.log(selectedRowKeys);
-              // Promise.resolve(deleteProduct(selectedRowKeys as string[]))
-              //   .then(() => {
-              //     void message.success("Delete pricing successfully");
-              //     fetchApi(page, 10);
-              //     setSelectedRowKeys([]);
-              //   })
-              //   .catch((error) => {
-              //     console.log(error);
-              //     message.error("Delete pricing failed");
-              //   });
-            }}
-            disabled={selectedRowKeys.length === 0}
-            onCancel={() => {}}
-            okText="Yes"
-            cancelText="No"
-          >
-            <button
-              className={
-                selectedRowKeys.length === 0 ? "disabledBtn" : "primaryBtn"
-              }
-              disabled={selectedRowKeys.length === 0}
-            >
-              Delete
-            </button>
-          </Popconfirm>
-
-          <button
-            className="primaryBtn"
-            onClick={() => {
-              navigate("/user/create");
-            }}
-          >
-            Add new user
-          </button>
-        </div>
-      </div>
+      )}
       <Table
         pagination={{
           total,
