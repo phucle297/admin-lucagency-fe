@@ -11,7 +11,7 @@ export class ProductsService {
         limit,
       },
     });
-    return response.data;
+    return response;
   }
   public static async createProduct({ ...body }): Promise<any> {
     const response = await HttpInterceptor.post(`/products`, {
@@ -23,7 +23,7 @@ export class ProductsService {
     const response = await HttpInterceptor.patch(`/products/${id}`, {
       ...body,
     });
-    return response.data;
+    return response;
   }
   public static async getProductById(id: string): Promise<any> {
     const response = await HttpInterceptor.get(`/products/${id}`);
@@ -45,7 +45,10 @@ export class ProductsService {
   ): Promise<any> {
     const formData = new FormData();
     // @ts-ignore
-    formData.append("file", fileRc?.originFileObj);
+    if (fileRc?.originFileObj) formData.append("file", fileRc?.originFileObj);
+    else {
+      formData.append("file", fileRc);
+    }
     const response = await HttpInterceptor.post(
       `/product-images/${id}`,
       formData,
@@ -59,11 +62,11 @@ export class ProductsService {
     return response.data;
   }
   public static async getProductImages(id: string): Promise<any> {
-    const response = await HttpInterceptor.get(`/products-images/${id}`);
+    const response = await HttpInterceptor.get(`/product-images/${id}`);
     return response.data;
   }
   public static async deleteProductImage(id: string): Promise<any> {
-    const response = await HttpInterceptor.delete(`/products-images/${id}`);
+    const response = await HttpInterceptor.delete(`/product-images/${id}`);
     return response.data;
   }
 }

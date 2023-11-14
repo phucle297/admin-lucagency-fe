@@ -3,6 +3,7 @@ import MainLayout from "@templates/MainLayout";
 import Contacts from "@pages/Contacts";
 import Pricing from "@pages/Pricing";
 import CreatePricing from "@pages/CreatePricing";
+import EditPricing from "@pages/EditPricing";
 
 function App() {
   return (
@@ -13,7 +14,7 @@ function App() {
             <Route path="contacts" element={<Contacts />} />
             <Route path="pricing" element={<Pricing />} />
             <Route path="pricing/create" element={<CreatePricing />} />
-            <Route path="pricing/edit/:id" element={<div>Edit</div>} />
+            <Route path="pricing/edit/:id" element={<EditPricing />} />
             <Route path="*" element={<div>Not found</div>} />
           </Route>
         </Routes>

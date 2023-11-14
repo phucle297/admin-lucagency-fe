@@ -22,9 +22,7 @@ export default function Pricing() {
     (state: IGlobalStore) => state.deleteProduct
   );
   const [listProduct, setListProduct] = useState<IProductInTable[]>([]);
-  // const [selectedRow, setSelectedRow] = useState<IProductInTable>(
-  //   {} as IProductInTable
-  // );
+
   const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
   const [total, setTotal] = useState<number>(0);
   const [page, setPage] = useState<number>(1);
@@ -121,6 +119,7 @@ export default function Pricing() {
                     const products = [record._id];
 
                     await deleteProduct(products);
+                    message.success("Delete pricing successfully");
                     fetchApi(page, 10);
                   } catch (error) {
                     console.log(error);
@@ -136,7 +135,8 @@ export default function Pricing() {
               <EditOutlined
                 className={styles.icon}
                 onClick={() => {
-                  // setSelectedRow(record as IProductInTable);
+                  // @ts-ignore
+                  navigate(`/pricing/edit/${record?._id}`);
                 }}
               />
             </Space>
@@ -187,7 +187,7 @@ export default function Pricing() {
         <div className="flex gap10">
           <button
             className={
-              selectedRowKeys.length !== 0 ? "primaryBtn" : "disabledBtn"
+              selectedRowKeys.length === 0 ? "disabledBtn" : "primaryBtn"
             }
             onClick={() => {
               console.log(selectedRowKeys);
@@ -195,6 +195,7 @@ export default function Pricing() {
                 .then(() => {
                   void message.success("Delete pricing successfully");
                   fetchApi(page, 10);
+                  setSelectedRowKeys([]);
                 })
                 .catch((error) => {
                   console.log(error);

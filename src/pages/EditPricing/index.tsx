@@ -3,22 +3,25 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { CheckCircleFilled, UploadOutlined } from "@ant-design/icons";
 import { Col, Form, Input, Row, Select, UploadProps, message } from "antd";
+import { RcFile } from "antd/es/upload";
 import Dragger from "antd/es/upload/Dragger";
 import { CategoryEnum } from "constants/category";
 import { NationEnum } from "constants/nation";
 import { useFormik } from "formik";
-import { useState } from "react";
+import { IProductImage } from "interfaces/products.interface";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ProductsService } from "services/product.service";
-import { useGlobalStore } from "store/globalStore";
 import styles from "./index.module.scss";
 
-export default function CreatePricing() {
+export default function EditPricing() {
   const navigate = useNavigate();
-  const createProduct = useGlobalStore((state) => state.createProduct);
   const [tab, setTab] = useState<number>(0);
-  const [fileList, setFileList] = useState([]);
+  const [fileList, setFileList] = useState<RcFile[]>([]);
+  const [defaultFileListKey, setDefaultFileListKey] = useState<string[]>([]);
+  const [productId, setProductId] = useState<string>("");
   const formik = useFormik({
+    enableReinitialize: true,
     initialValues: {
       title: "",
       category: "",
@@ -49,12 +52,25 @@ export default function CreatePricing() {
         delete product.highlight2;
         delete product.highlight3;
         delete product.highlight4;
+        const resUpdate = await ProductsService.updateProduct(productId, {
+          ...product,
+        });
+        console.log(resUpdate);
 
-        const resCreate = await createProduct(product);
-        if (resCreate) {
+        if (resUpdate?.status === 200) {
           // @ts-ignore
-          const productId = resCreate?._id;
-          fileList.forEach((file: any) => {
+
+          const listImgWillBeDeleted = defaultFileListKey.filter(
+            (item) => !fileList.map((item) => item.uid).includes(item)
+          );
+
+          listImgWillBeDeleted?.map((item) => {
+            ProductsService.deleteProductImage(item);
+          });
+          const listWillBeUploaded = fileList.filter(
+            (item) => !defaultFileListKey.includes(item.uid)
+          );
+          listWillBeUploaded.forEach((file: any) => {
             ProductsService.uploadProductImage(productId, file);
           });
         }
@@ -63,9 +79,9 @@ export default function CreatePricing() {
         // @ts-ignore
         void message.error(error?.message || "Something went wrong!");
       } finally {
-        void message.success("Create product successfully!");
-        navigate("/pricing");
-        formik.resetForm();
+        // void message.success("Update product successfully!");
+        // navigate("/pricing");
+        // formik.resetForm();
       }
     },
   });
@@ -92,10 +108,62 @@ export default function CreatePricing() {
     },
   };
 
+  const fetchProduct = async (productId: string) => {
+    try {
+      const res = await ProductsService.getProductById(productId);
+      formik.setValues({
+        title: res?.title,
+        category: res?.category,
+        price: res?.price,
+        highlight1: res?.highlights[0],
+        highlight2: res?.highlights[1],
+        highlight3: res?.highlights[2],
+        highlight4: res?.highlights[3],
+        available_quantity: res?.available_quantity,
+        nation: res?.nation,
+        discount_price: res?.discount_price,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const fetchProductImage = async (productId: string) => {
+    try {
+      const res = await ProductsService.getProductImages(productId);
+      const listKeys: string[] = [];
+      if (res.length > 0) {
+        setFileList(
+          res.map((item: IProductImage) => {
+            listKeys.push(item._id);
+            return {
+              uid: item._id,
+              name: item.path.split("/").pop(),
+              status: "done",
+              url: import.meta.env.VITE_BASE_URL_API.replace("api", item.path),
+            };
+          })
+        );
+        setDefaultFileListKey(listKeys);
+      }
+    } catch (error) {
+      console.log(error);
+      // @ts-ignore
+      if (error.statusCode === 404) {
+        console.log("No image found");
+      }
+    }
+  };
+  useEffect(() => {
+    const id = location.pathname.split("/")[3];
+    setProductId(id);
+    fetchProduct(id);
+    fetchProductImage(id);
+  }, [location.pathname]);
+
   return (
     <div className={styles.wrapper}>
       <div className="flex justifyBetween alignCenter">
-        <h1>New Pricing</h1>
+        <h1>Edit Pricing</h1>
         <div className="flex gap10">
           <button
             className="secondaryBtn"
@@ -111,7 +179,7 @@ export default function CreatePricing() {
               formik.handleSubmit();
             }}
           >
-            Submit
+            Save Change
           </button>
         </div>
       </div>

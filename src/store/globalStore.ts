@@ -18,6 +18,7 @@ export interface IGlobalStore {
   getProducts: (page: number, limit: number) => Promise<IResponseDataStatus>;
   createProduct: (body: IProduct) => Promise<IResponseDataStatus>;
   deleteProduct: (listProductIds: string[]) => Promise<IResponseDataStatus>;
+  updateProduct: (productId: string, { ...params }) => Promise<any>;
 }
 export const useGlobalStore = create(
   persist<IGlobalStore>(
@@ -63,6 +64,21 @@ export const useGlobalStore = create(
           const products = state.products.filter(
             (product) => !listProductIds.includes(product._id)
           );
+          return { ...state, products };
+        });
+        return res;
+      },
+      updateProduct: async (productId: string, { ...params }) => {
+        const res = await ProductsService.updateProduct(productId, {
+          ...params,
+        });
+        set((state) => {
+          const products = state.products.map((product) => {
+            if (product._id === productId) {
+              return { ...product, ...params };
+            }
+            return product;
+          });
           return { ...state, products };
         });
         return res;

@@ -15,19 +15,19 @@ function getAxiosInstance() {
   });
   instance.interceptors.response.use(
     function (response) {
-      return response;
+      return response.data;
     },
     function (error) {
       const response = error.response;
       const errorMessage = response?.data?.message;
-      const statusCode = response?.status;
+      const statusCode = response?.data?.statusCode || response?.status;
 
       if (errorMessage === "invalid token" || statusCode === 401) {
         const loginUrl = "/login";
         console.log(`Redirect to ${loginUrl}`);
       }
 
-      return Promise.reject(new Error(errorMessage));
+      throw { message: errorMessage, statusCode: statusCode };
     }
   );
 

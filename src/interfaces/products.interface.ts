@@ -22,3 +22,12 @@ export interface IProductInTable {
   discount_price?: number;
   highlights?: string[];
 }
+
+export interface IProductImage {
+  _id: string;
+  created_at: string;
+  path: string;
+  product_id: string;
+  size: number;
+  updated_at: string;
+}
