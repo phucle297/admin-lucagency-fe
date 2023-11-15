@@ -128,7 +128,6 @@ export default function Posts() {
               listHotTopic?.find((item) => item._id === record._id)?.hot_topic
             }
             onChange={async (e) => {
-              console.log(listHotTopic);
               try {
                 await PostsService.updatePostById(record._id as string, {
                   ...record,

@@ -124,7 +124,6 @@ export default function Users() {
   }, [tab]);
 
   const onSelectChange = (newSelectedRowKeys: Key[]) => {
-    console.log("selectedRowKeys changed: ", newSelectedRowKeys);
     setSelectedRowKeys(newSelectedRowKeys);
   };
 

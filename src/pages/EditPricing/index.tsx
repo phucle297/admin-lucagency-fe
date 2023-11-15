@@ -55,7 +55,6 @@ export default function EditPricing() {
         const resUpdate = await ProductsService.updateProduct(productId, {
           ...product,
         });
-        console.log(resUpdate);
 
         if (resUpdate?.status === 200) {
           // @ts-ignore
