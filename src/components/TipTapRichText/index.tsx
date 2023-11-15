@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { FileImageOutlined } from "@ant-design/icons";
+import { getBase64 } from "@helpers/getBase64";
 import { Link, RichTextEditor } from "@mantine/tiptap";
 import FontFamily from "@tiptap/extension-font-family";
 import Highlight from "@tiptap/extension-highlight";
@@ -14,14 +15,16 @@ import Underline from "@tiptap/extension-underline";
 import { useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { Input, Select, Upload, UploadProps } from "antd";
-import { FC, useEffect } from "react";
+import { FC } from "react";
 import FontSize from "tiptap-extension-font-size";
 import styles from "./index.module.scss";
 
-const content =
-  '<h2 style="text-align: center;">Rich text editor</h2><p><code>RichTextEditor</code> component focuses on usability and is designed to be as simple as possible to bring a familiar editing experience to regular users. <code>RichTextEditor</code> is based on <a href="https://tiptap.dev/" rel="noopener noreferrer" target="_blank">Tiptap.dev</a> and supports all of its features:</p><ul><li>General text formatting: <strong>bold</strong>, <em>italic</em>, <u>underline</u>, <s>strike-through</s> </li><li>Headings (h1-h6)</li><li>Sub and super scripts (<sup>&lt;sup /&gt;</sup> and <sub>&lt;sub /&gt;</sub> tags)</li><li>Ordered and bullet lists</li><li>Text align&nbsp;</li><li>And all <a href="https://tiptap.dev/extensions" target="_blank" rel="noopener noreferrer">other extensions</a></li></ul> <p>This is a basic example of implementing images. Drag to re-order.</p><img src="https://source.unsplash.com/8xznAGy4HcY/800x400" /><img src="https://source.unsplash.com/K9QHL52rE2k/800x400" />';
+interface ITipTapRichTextProps {
+  content: string;
+  setContent: (htmlData: string) => void;
+}
 
-const TipTapRichText: FC = () => {
+const TipTapRichText: FC<ITipTapRichTextProps> = ({ content, setContent }) => {
   const editor = useEditor({
     extensions: [
       FontSize,
@@ -43,18 +46,11 @@ const TipTapRichText: FC = () => {
       }),
       TextAlign.configure({ types: ["heading", "paragraph"] }),
     ],
-    content,
+    content: content,
+    onTransaction: (tr) => {
+      setContent(tr.editor.getHTML());
+    },
   });
-  const getBase64 = (file: File, callback: any) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = function () {
-      callback(reader.result);
-    };
-    reader.onerror = function (error) {
-      console.log("Error: ", error);
-    };
-  };
 
   const uploadProps: UploadProps = {
     name: "image",
@@ -70,46 +66,27 @@ const TipTapRichText: FC = () => {
     },
   };
 
-  useEffect(() => {}, []);
-
   if (!editor) return null;
 
   return (
-    <>
-      <button
-        className="primaryBtn"
-        style={{
-          marginBottom: 30,
-        }}
-        onClick={() => {
-          // create html file
-          const element = document.createElement("a");
-          const file = new Blob([editor.getHTML()], {
-            type: "text/html",
-          });
-          element.href = URL.createObjectURL(file);
-          element.download = "index.html";
-          document.body.appendChild(element);
-          element.click();
-        }}
+    <RichTextEditor editor={editor} className={styles.tiptap}>
+      <RichTextEditor.Toolbar
+        sticky
+        stickyOffset={60}
+        className={styles.toolbar}
       >
-        export html
-      </button>
-      <RichTextEditor editor={editor} className={styles.tiptap}>
-        <RichTextEditor.Toolbar
-          sticky
-          stickyOffset={60}
-          className={styles.toolbar}
-        >
+        <div className={styles.group}>
           <Input
             key={"fontsize"}
             name="fontsize"
             placeholder="Font size"
             style={{
               width: 120,
+              minWidth: 120,
+              height: 32,
             }}
+            className={styles.item}
             onChange={(e) => {
-              console.log(e.target.value);
               editor.chain().setFontSize(`${e.target.value}px`).run();
             }}
           ></Input>
@@ -117,6 +94,7 @@ const TipTapRichText: FC = () => {
             style={{
               width: 120,
             }}
+            className={styles.item}
             placeholder="Font family"
             options={[
               { title: "Unset", value: "Unset" },
@@ -150,10 +128,12 @@ const TipTapRichText: FC = () => {
               }
             }}
           />
+          <p className={styles.line}>|</p>
           <RichTextEditor.Bold />
           <RichTextEditor.Italic />
           <RichTextEditor.Underline />
-          <RichTextEditor.Strikethrough />|
+          <RichTextEditor.Strikethrough />
+          <p className={styles.line}>|</p>
           <button
             onClick={() => {
               // @ts-ignore
@@ -168,10 +148,7 @@ const TipTapRichText: FC = () => {
           <RichTextEditor.H1 />
           <RichTextEditor.H2 />
           <RichTextEditor.H3 />
-          <RichTextEditor.H4 />
-          <RichTextEditor.H5 />
-          <RichTextEditor.H6 />
-          |
+          <p className={styles.line}>|</p>
           <RichTextEditor.ClearFormatting />
           <RichTextEditor.Highlight />
           <RichTextEditor.Code />
@@ -194,11 +171,11 @@ const TipTapRichText: FC = () => {
               </button>
             </Upload>
           </div>
-        </RichTextEditor.Toolbar>
+        </div>
+      </RichTextEditor.Toolbar>
 
-        <RichTextEditor.Content className={styles.content} />
-      </RichTextEditor>
-    </>
+      <RichTextEditor.Content className={styles.content} />
+    </RichTextEditor>
   );
 };
 export default TipTapRichText;

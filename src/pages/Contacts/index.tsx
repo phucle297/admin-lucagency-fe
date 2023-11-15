@@ -19,7 +19,7 @@ import telegram from "@images/telegram.png";
 import { Space, Switch, Table, message } from "antd";
 import dayjs from "dayjs";
 import { IResponseDataStatus } from "@interfaces/utils.interface";
-import ModalEditContacts from "@components/ModalEditContacts";
+import ModalEditContacts from "@pages/Contacts/ModalEditContacts";
 
 export default function Contacts() {
   const getContacts = useGlobalStore(

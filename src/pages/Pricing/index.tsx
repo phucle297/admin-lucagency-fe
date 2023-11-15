@@ -189,7 +189,6 @@ export default function Pricing() {
             title="Delete pricing"
             description="Are you sure to delete?"
             onConfirm={() => {
-              console.log(selectedRowKeys);
               Promise.resolve(deleteProduct(selectedRowKeys as string[]))
                 .then(() => {
                   void message.success("Delete pricing successfully");

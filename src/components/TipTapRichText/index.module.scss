@@ -1,45 +1,64 @@
 .tiptap {
-    position: relative;
-    width: 100%;
-    border: 1px solid #999;
-    border-radius: 8px;
+  position: relative;
+  width: 100%;
+  border: 1px solid #999;
+  border-radius: 8px;
 }
 
 .toolbar {
+  align-items: center;
+  justify-content: center;
+  margin: 1rem auto;
+  margin-bottom: 0;
+  overflow-y: auto;
+  max-width: 95%;
+
+  .group {
     display: flex;
     align-items: center;
     gap: 5px;
+  }
+  .line,
+  .item {
+    margin-bottom: 1rem;
+  }
+
+  button {
+    background: white;
+    cursor: pointer;
+    padding: 0;
+    margin: 0;
+    border: 1px solid #000;
+    border-radius: 4px;
+    width: 30px;
+    min-width: 30px;
+    height: 30px;
+    min-height: 30px;
+    display: flex;
+    align-items: center;
     justify-content: center;
-    margin: 1rem 0;
-    button {
-        background: white;
-        cursor: pointer;
-        padding: 0;
-        margin: 0;
-        border: 1px solid #000;
-        border-radius: 4px;
-        width: 30px;
-        height: 30px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+    margin-bottom: 1rem;
+
+    svg {
+      display: block;
     }
+  }
 }
 
 .content {
-    margin-bottom: 0 !important;
-    border-top: 1px solid #999;
-    padding: 0 !important;
-    > div > div {
-        border-radius: 8px;
-        padding: 1rem !important;
-    }
+  margin-bottom: 0 !important;
+  border-top: 1px solid #999;
+  padding: 0 !important;
+  > div > div {
+    border-radius: 8px;
+    padding: 1rem !important;
+  }
 }
 .upload {
+  height: fit-content !important;
+  display: block;
+  div {
     height: fit-content !important;
-    display: block;
-    div {
-        height: fit-content !important;
-        margin: 0;
-    }
+    margin: 0;
+  }
 }

@@ -3,7 +3,7 @@ export interface IPost {
   state: string;
   categories: string[];
   hot_topic: boolean;
-  translations: IPostTranslation[];
+  translations?: IPostTranslation[];
   key?: string;
   _id?: string;
 }
@@ -13,5 +13,5 @@ export interface IPostTranslation {
   title: string;
   description: string;
   language: string;
-  path: string;
+  path?: string;
 }

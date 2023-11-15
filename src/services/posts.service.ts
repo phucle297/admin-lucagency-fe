@@ -73,18 +73,6 @@ export class PostsService {
     );
     return response;
   }
-  public static async uploadThumbnails(id: string, file: FormData) {
-    const response = await HttpInterceptor.patch(
-      `/posts/thumbnail/${id}`,
-      file,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
-    return response;
-  }
   public static async getPostById(id: string) {
     const response = await HttpInterceptor.get(`/posts/${id}`);
     return response;
@@ -97,6 +85,18 @@ export class PostsService {
   }
   public static async deletePostById(id: string) {
     const response = await HttpInterceptor.delete(`/posts/${id}`);
+    return response;
+  }
+  public static async postThumbnail(id: string, file: FormData) {
+    const response = await HttpInterceptor.post(
+      `/posts/thumbnails/${id}`,
+      file,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
     return response;
   }
 }
