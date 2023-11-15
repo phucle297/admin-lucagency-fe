@@ -10,7 +10,16 @@ import {
 import { useWidth } from "@hooks/useWidth";
 import { IPost } from "@interfaces/posts.interface";
 import { useGlobalStore } from "@stores/globalStore";
-import { Form, Input, Popconfirm, Select, Space, Switch, Table } from "antd";
+import {
+  Form,
+  Input,
+  Popconfirm,
+  Select,
+  Space,
+  Switch,
+  Table,
+  message,
+} from "antd";
 import dayjs from "dayjs";
 import { useFormik } from "formik";
 import { IResponseDataStatus } from "interfaces/utils.interface";
@@ -19,6 +28,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./index.module.scss";
 import _ from "lodash";
+import { PostsService } from "@services/posts.service";
 
 export default function Posts() {
   const width = useWidth();
@@ -127,16 +137,16 @@ export default function Posts() {
                 title="Delete post"
                 description="Are you sure to delete this post?"
                 onConfirm={async () => {
-                  // try {
-                  //   // @ts-ignore
-                  //   const users = [record._id];
-                  //   await UsersService.deleteUsers(users);
-                  //   message.success("Delete user successfully");
-                  //   fetchApi({ ...params });
-                  // } catch (error) {
-                  //   console.log(error);
-                  //   message.success("Delete user failed");
-                  // }
+                  try {
+                    // @ts-ignore
+                    await PostsService.deletePostById(record._id);
+                    message.success("Delete user successfully");
+                    //@ts-ignore
+                    fetchApi({ ...params });
+                  } catch (error) {
+                    console.log(error);
+                    message.success("Delete user failed");
+                  }
                 }}
                 onCancel={() => {}}
                 okText="Yes"
@@ -148,7 +158,7 @@ export default function Posts() {
                 className={styles.icon}
                 onClick={() => {
                   // @ts-ignore
-                  navigate(`/users/edit/${record?._id}`);
+                  navigate(`/posts/edit/${record?._id}`);
                 }}
               />
             </Space>
@@ -165,17 +175,51 @@ export default function Posts() {
     limit: number;
     search: string | undefined;
     state: string | undefined;
-    hot_topic: boolean | undefined;
+    hot_topic: boolean | string | undefined;
     language: string | undefined;
   }) => {
     const { page, limit, search, state, hot_topic, language } = params;
-    const res: IResponseDataStatus = await getPosts(
+    let formatedParams = {
       page,
       limit,
       search,
       state,
       hot_topic,
-      language
+      language,
+    };
+    if (params.state === PostStateEnum.ALL) {
+      formatedParams = {
+        ...formatedParams,
+        state: undefined,
+      };
+    }
+    if (params.hot_topic === PostHotTopicEnum.ALL) {
+      formatedParams = {
+        ...formatedParams,
+        hot_topic: undefined,
+      };
+    } else {
+      let formatedHotTopic;
+      if (params.hot_topic === PostHotTopicEnum.TRUE) formatedHotTopic = true;
+      if (params.hot_topic === PostHotTopicEnum.FALSE) formatedHotTopic = false;
+      formatedParams = {
+        ...formatedParams,
+        hot_topic: formatedHotTopic,
+      };
+    }
+    if (params.language === PostLanguageEnum.ALL) {
+      formatedParams = {
+        ...formatedParams,
+        language: undefined,
+      };
+    }
+    const res: IResponseDataStatus = await getPosts(
+      formatedParams?.page,
+      formatedParams?.limit,
+      formatedParams?.search,
+      formatedParams?.state,
+      formatedParams?.hot_topic as boolean | undefined,
+      formatedParams?.language
     );
     setListPosts(
       // @ts-ignore
@@ -348,10 +392,10 @@ export default function Posts() {
           <button
             className="primaryBtn"
             onClick={() => {
-              navigate("/users/create");
+              navigate("/posts/create");
             }}
           >
-            Add new user
+            Add new post
           </button>
         </div>
       </div>
