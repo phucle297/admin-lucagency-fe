@@ -32,11 +32,12 @@
       "@hooks/*": ["hooks/*"],
       "@constants/*": ["constants/*"],
       "@services/*": ["services/*"],
-      "@stores/*": ["stores/*"]
+      "@stores/*": ["stores/*"],
+      "@helpers/*": ["helpers/*"]
     },
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true
   },
-  "include": ["src"],
+  "include": ["src", "postcss.config.cjs"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

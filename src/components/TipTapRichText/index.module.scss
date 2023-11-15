@@ -1,0 +1,45 @@
+.tiptap {
+    position: relative;
+    width: 100%;
+    border: 1px solid #999;
+    border-radius: 8px;
+}
+
+.toolbar {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    justify-content: center;
+    margin: 1rem 0;
+    button {
+        background: white;
+        cursor: pointer;
+        padding: 0;
+        margin: 0;
+        border: 1px solid #000;
+        border-radius: 4px;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+.content {
+    margin-bottom: 0 !important;
+    border-top: 1px solid #999;
+    padding: 0 !important;
+    > div > div {
+        border-radius: 8px;
+        padding: 1rem !important;
+    }
+}
+.upload {
+    height: fit-content !important;
+    display: block;
+    div {
+        height: fit-content !important;
+        margin: 0;
+    }
+}
