@@ -36,6 +36,9 @@ export default function Posts() {
   const getPosts = useGlobalStore((state) => state.getPosts);
   const [total, setTotal] = useState<number>(0);
   const [listPosts, setListPosts] = useState<IPost[]>([]);
+  const [listHotTopic, setListHotTopic] = useState<
+    { _id: string; hot_topic: boolean }[]
+  >([]);
   const [params, setParams] = useState<{
     page: number;
     limit: number;
@@ -117,8 +120,41 @@ export default function Posts() {
       title: "Hot Topic",
       dataIndex: "hot_topic",
       key: "hot_topic",
-      render: (checked: boolean) => {
-        return <Switch defaultChecked={checked} onChange={() => {}} />;
+      render: (_: boolean, record: IPost) => {
+        return (
+          <Switch
+            // @ts-ignore
+            checked={
+              listHotTopic?.find((item) => item._id === record._id)?.hot_topic
+            }
+            onChange={async (e) => {
+              console.log(listHotTopic);
+              try {
+                await PostsService.updatePostById(record._id as string, {
+                  ...record,
+                  hot_topic: e,
+                });
+                message.success("Update hot topic successfully");
+
+                setListHotTopic(
+                  listHotTopic?.map((item) => {
+                    if (item._id === record._id) {
+                      return {
+                        ...item,
+                        hot_topic: e,
+                      };
+                    }
+                    return item;
+                  })
+                );
+              } catch (error) {
+                console.log(error);
+                // @ts-ignore
+                message.error(error?.message);
+              }
+            }}
+          />
+        );
       },
     },
     {
@@ -175,7 +211,7 @@ export default function Posts() {
     limit: number;
     search: string | undefined;
     state: string | undefined;
-    hot_topic: boolean | string | undefined;
+    hot_topic: boolean | undefined;
     language: string | undefined;
   }) => {
     const { page, limit, search, state, hot_topic, language } = params;
@@ -193,20 +229,7 @@ export default function Posts() {
         state: undefined,
       };
     }
-    if (params.hot_topic === PostHotTopicEnum.ALL) {
-      formatedParams = {
-        ...formatedParams,
-        hot_topic: undefined,
-      };
-    } else {
-      let formatedHotTopic;
-      if (params.hot_topic === PostHotTopicEnum.TRUE) formatedHotTopic = true;
-      if (params.hot_topic === PostHotTopicEnum.FALSE) formatedHotTopic = false;
-      formatedParams = {
-        ...formatedParams,
-        hot_topic: formatedHotTopic,
-      };
-    }
+
     if (params.language === PostLanguageEnum.ALL) {
       formatedParams = {
         ...formatedParams,
@@ -224,6 +247,13 @@ export default function Posts() {
     setListPosts(
       // @ts-ignore
       res?.data.map((item: IPost) => ({ ...item, key: item?._id })) as IPost[]
+    );
+    setListHotTopic(
+      // @ts-ignore
+      res?.data.map((item: IPost) => ({
+        _id: item?._id,
+        hot_topic: item?.hot_topic,
+      }))
     );
     setTotal(res.extras?.total as number);
   };
@@ -258,20 +288,7 @@ export default function Posts() {
         state: undefined,
       };
     }
-    if (params.hot_topic === PostHotTopicEnum.ALL) {
-      formatedParams = {
-        ...formatedParams,
-        hot_topic: undefined,
-      };
-    } else {
-      let formatedHotTopic;
-      if (params.hot_topic === PostHotTopicEnum.TRUE) formatedHotTopic = true;
-      if (params.hot_topic === PostHotTopicEnum.FALSE) formatedHotTopic = false;
-      formatedParams = {
-        ...formatedParams,
-        hot_topic: formatedHotTopic,
-      };
-    }
+
     if (params.language === PostLanguageEnum.ALL) {
       formatedParams = {
         ...formatedParams,
@@ -535,10 +552,17 @@ export default function Posts() {
               onBlur={formik.handleBlur}
               value={formik.values.hot_topic}
               onChange={(e) => {
+                let ht: boolean | undefined;
+                if (e === PostHotTopicEnum.ALL) {
+                  ht = undefined;
+                } else {
+                  // @ts-ignore
+                  ht = e;
+                }
                 formik.setFieldValue("hot_topic", e);
                 debounceUpdateParams({
                   ...params,
-                  hot_topic: e,
+                  hot_topic: ht,
                 });
               }}
               key="hot_topic"
@@ -550,11 +574,11 @@ export default function Posts() {
                 },
                 {
                   label: PostHotTopicEnum.TRUE,
-                  value: PostHotTopicEnum.TRUE,
+                  value: true,
                 },
                 {
                   label: PostHotTopicEnum.FALSE,
-                  value: PostHotTopicEnum.FALSE,
+                  value: false,
                 },
               ]}
             />
