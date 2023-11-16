@@ -27,7 +27,7 @@ export default function Login() {
         if (res.status === 200 && res?.data?.user?.role === "admin") {
           message.success("Login successfully");
           localStorage.setItem(LocalStorageKeys.TOKEN, res?.data?.access_token);
-          window.location.href = "/pricing";
+          window.location.href = "/posts";
         }
       } catch (error) {
         console.log(error);
