@@ -1,6 +1,10 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
 import {
   PostHotTopicEnum,
   PostLanguageEnum,
@@ -477,18 +481,21 @@ export default function Posts() {
             >
               Search
             </p>
-            <Input
-              onBlur={formik.handleBlur}
-              onChange={(e) => {
-                formik.setFieldValue("search", e.target.value);
-                debounceUpdateParams({
-                  ...params,
-                  search: e.target.value,
-                });
-              }}
-              value={formik.values.search}
-              name="search"
-            />
+            <div className={styles.searchBar}>
+              <Input
+                onBlur={formik.handleBlur}
+                onChange={(e) => {
+                  formik.setFieldValue("search", e.target.value);
+                  debounceUpdateParams({
+                    ...params,
+                    search: e.target.value,
+                  });
+                }}
+                value={formik.values.search}
+                name="search"
+              />
+              <SearchOutlined className={styles.searchIcon} />
+            </div>
           </div>
         </Form.Item>
 

@@ -30,14 +30,14 @@
   .ant-select-selector {
     background: #f3f5f7 !important;
     color: #000000ae !important;
-    padding: 0.5rem 1rem !important;
+    padding: 0.5rem 1rem;
   }
 }
 input,
 textarea {
-  background: #f3f5f7 !important;
-  color: #000000ae !important;
-  padding: 0.5rem 1rem !important;
+  background: #f3f5f7;
+  color: #000000ae;
+  padding: 0.5rem 1rem;
 }
 .ant-upload {
   height: 10rem !important;

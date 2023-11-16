@@ -49,3 +49,16 @@
   margin: 1rem 0;
   gap: 10px;
 }
+.searchBar {
+  position: relative;
+  input {
+    padding-left: 2.5rem !important;
+  }
+  .searchIcon {
+    position: absolute;
+    top: 50%;
+    left: 1rem;
+    transform: translateY(-50%);
+    color: #0000008a;
+  }
+}
