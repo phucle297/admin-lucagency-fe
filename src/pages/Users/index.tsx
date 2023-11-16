@@ -13,7 +13,7 @@ import { UsersService } from "@services/users.service";
 import { useWidth } from "@hooks/useWidth";
 import { useDisclosure } from "@hooks/useDisclosure";
 import ModalEditUsers from "./ModalEditUsers";
-import { ITotalList } from "@constants/totalList";
+import { ITotalListUser } from "@constants/totalList";
 
 export default function Users() {
   const width = useWidth();
@@ -26,7 +26,7 @@ export default function Users() {
   const [listUsers, setListUsers] = useState<IUser[]>([]);
   const modalEditUser = useDisclosure();
   const [selectedRow, setSelectedRow] = useState<IUser>({} as IUser);
-  const [listTotal, setListTotal] = useState<ITotalList>({} as ITotalList);
+  const [listTotal, setListTotal] = useState<ITotalListUser>({} as ITotalListUser);
   const columns = [
     {
       title: "Name",

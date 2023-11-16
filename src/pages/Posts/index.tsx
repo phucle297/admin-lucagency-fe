@@ -33,6 +33,8 @@ import { useNavigate } from "react-router-dom";
 import styles from "./index.module.scss";
 import _ from "lodash";
 import { PostsService } from "@services/posts.service";
+import { IParamsPost } from "@constants/params";
+import { ITotalListPost } from "@constants/totalList";
 
 export default function Posts() {
   const width = useWidth();
@@ -44,14 +46,7 @@ export default function Posts() {
     { _id: string; hot_topic: boolean }[]
   >([]);
   const [page, setPage] = useState<number>(1);
-  const [params, setParams] = useState<{
-    page: number;
-    limit: number;
-    search: string | undefined;
-    state: string | undefined;
-    hot_topic: boolean | string | undefined;
-    language: string | undefined;
-  }>({
+  const [params, setParams] = useState<IParamsPost>({
     page: 1,
     limit: 10,
     search: undefined,
@@ -59,6 +54,9 @@ export default function Posts() {
     hot_topic: undefined,
     language: undefined,
   });
+  const [totalList, setTotalList] = useState<ITotalListPost>(
+    {} as ITotalListPost
+  );
   const formik = useFormik({
     initialValues: {
       search: undefined,
@@ -260,6 +258,15 @@ export default function Posts() {
       }))
     );
     setTotal(res.extras?.total as number);
+
+    const drafts = res.extras?.drafts as number;
+    const published_posts = res.extras?.published_posts as number;
+    const total = drafts + published_posts;
+    setTotalList({
+      total,
+      drafts,
+      published_posts,
+    });
   };
   useEffect(() => {
     fetchApi({
@@ -376,7 +383,7 @@ export default function Posts() {
                 });
               }}
             >
-              All posts
+              All posts ({totalList.total})
             </button>
             <button
               className={
@@ -391,7 +398,7 @@ export default function Posts() {
                 });
               }}
             >
-              Published
+              Published ({totalList.published_posts})
             </button>
             <button
               className={
@@ -406,7 +413,7 @@ export default function Posts() {
                 });
               }}
             >
-              Draft
+              Draft ({totalList.drafts})
             </button>
           </div>
         )}

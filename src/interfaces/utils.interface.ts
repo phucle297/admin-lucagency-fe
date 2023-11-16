@@ -10,5 +10,7 @@ export interface IResponseDataStatus {
     content?: number;
     sales?: number;
     seo?: number;
+    drafts?: number;
+    published_posts?: number;
   };
 }
