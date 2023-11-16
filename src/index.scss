@@ -26,13 +26,19 @@
     height: 2.4rem !important;
   }
   input,
+  textarea,
   .ant-select-selector {
     background: #f3f5f7 !important;
     color: #000000ae !important;
     padding: 0.5rem 1rem !important;
   }
 }
-
+input,
+textarea {
+  background: #f3f5f7 !important;
+  color: #000000ae !important;
+  padding: 0.5rem 1rem !important;
+}
 .ant-upload {
   height: 10rem !important;
   margin-bottom: 1rem;

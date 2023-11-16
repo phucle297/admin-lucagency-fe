@@ -19,6 +19,10 @@ interface IGeneralInformationProps {
   setLang: (lang: LanguagesEnum.ENGLISH | LanguagesEnum.CHINESE) => void;
   setThumbnail: (thumbnail: any) => void;
   setAuthor: (author: string) => void;
+  defaultAuthor: string;
+  defaultGeneralDataEN: IPostTranslation;
+  defaultGeneralDataCN: IPostTranslation;
+  defaultThumbnail: Blob;
 }
 const GeneralInformation: FC<IGeneralInformationProps> = ({
   setGeneralDataEN,
@@ -27,6 +31,10 @@ const GeneralInformation: FC<IGeneralInformationProps> = ({
   setLang,
   setAuthor,
   setThumbnail,
+  defaultAuthor,
+  defaultGeneralDataEN,
+  defaultGeneralDataCN,
+  defaultThumbnail,
 }) => {
   const [fileList, setFileList] = useState<any[]>([]);
   const formik = useFormik({
@@ -48,11 +56,13 @@ const GeneralInformation: FC<IGeneralInformationProps> = ({
   });
   useEffect(() => {
     setGeneralDataEN({
+      ...defaultGeneralDataEN,
       language: LanguagesEnum.ENGLISH,
       title: formik.values.titleEN,
       description: formik.values.descriptionEN,
     });
     setGeneralDataCN({
+      ...defaultGeneralDataCN,
       language: LanguagesEnum.CHINESE,
       title: formik.values.titleCN,
       description: formik.values.descriptionCN,
@@ -102,6 +112,28 @@ const GeneralInformation: FC<IGeneralInformationProps> = ({
     },
   };
 
+  useEffect(() => {
+    formik.setFieldValue("author", defaultAuthor);
+    formik.setFieldValue("titleEN", defaultGeneralDataEN?.title);
+    formik.setFieldValue("descriptionEN", defaultGeneralDataEN?.description);
+    formik.setFieldValue("titleCN", defaultGeneralDataCN?.title);
+    formik.setFieldValue("descriptionCN", defaultGeneralDataCN?.description);
+    if (!defaultThumbnail) return;
+    const fileRC = {
+      originFileObj: defaultThumbnail,
+      uid: "-1",
+      name: "image",
+      status: "done",
+    };
+    setFileList([fileRC]);
+    setThumbnail(fileRC);
+  }, [
+    defaultAuthor,
+    defaultGeneralDataEN,
+    defaultGeneralDataCN,
+    defaultThumbnail,
+  ]);
+
   return (
     <div className={styles.wrapper}>
       <h2 className="mb10">General Information</h2>
@@ -117,6 +149,7 @@ const GeneralInformation: FC<IGeneralInformationProps> = ({
         <Form.Item name="name">
           <div>
             <Input
+              disabled
               onBlur={formik.handleBlur}
               onChange={formik.handleChange}
               value={formik.values.author}

@@ -1,0 +1,19 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.content {
+  margin-top: 1rem;
+}
+.controls {
+  display: flex;
+  width: 100%;
+  gap: 5px;
+
+  button {
+    width: 100% !important;
+    display: block;
+  }
+}

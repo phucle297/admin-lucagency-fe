@@ -87,7 +87,7 @@ export class PostsService {
     const response = await HttpInterceptor.delete(`/posts/${id}`);
     return response;
   }
-  public static async postThumbnail(id: string, file: FormData) {
+  public static async uploadThumbnail(id: string, file: FormData) {
     const response = await HttpInterceptor.post(
       `/posts/thumbnails/${id}`,
       file,

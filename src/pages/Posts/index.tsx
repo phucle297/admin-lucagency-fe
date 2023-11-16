@@ -39,6 +39,7 @@ export default function Posts() {
   const [listHotTopic, setListHotTopic] = useState<
     { _id: string; hot_topic: boolean }[]
   >([]);
+  const [page, setPage] = useState<number>(1);
   const [params, setParams] = useState<{
     page: number;
     limit: number;
@@ -269,10 +270,11 @@ export default function Posts() {
   const debounceUpdateParams = useCallback(
     _.debounce((params) => {
       setParams(params);
-    }, 500),
+    }, 200),
     []
   );
   useEffect(() => {
+    setPage(1);
     let formatedParams = {
       page: 1,
       limit: 10,
@@ -588,11 +590,9 @@ export default function Posts() {
         pagination={{
           total,
           pageSize: 10,
+          current: page,
           onChange: (page) => {
-            debounceUpdateParams({
-              ...params,
-              page,
-            });
+            setPage(page);
             // @ts-ignore
             fetchApi({ ...params, page }).catch(console.log);
           },

@@ -4,23 +4,33 @@
 import TipTapRichText from "@components/TipTapRichText";
 import { LanguagesEnum } from "@constants/languagues";
 import { PostStateEnum } from "@constants/posts";
-import { DEFAULT_HTML_DATA } from "@constants/utils";
 import { ICategory } from "@interfaces/categories.interface";
 import { IPost, IPostTranslation } from "@interfaces/posts.interface";
 import { CategoriesService } from "@services/categories.service";
 import { PostsService } from "@services/posts.service";
-import { Col, Row, message } from "antd";
+import { Col, Row, Switch, message } from "antd";
+import { RcFile } from "antd/es/upload";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import GeneralInformation from "./GeneralInformation";
 import TableCategories from "./TableCategories";
 import styles from "./index.module.scss";
-import { RcFile } from "antd/es/upload";
 
-export default function CreatePost() {
-  const [contentEN, setContentEN] = useState(DEFAULT_HTML_DATA);
-  const [contentCN, setContentCN] = useState(DEFAULT_HTML_DATA);
+export default function EditPost() {
+  const [contentEN, setContentEN] = useState<string>("");
+  const [contentCN, setContentCN] = useState<string>("");
+  const [defaultContentEN, setDefaultContentEN] = useState<string>("");
+  const [defaultContentCN, setDefaultContentCN] = useState<string>("");
+  const [defaultAuthor, setDefaultAuthor] = useState<string>("");
+  const [defaultGeneralDataEN, setDefaultGeneralDataEN] =
+    useState<IPostTranslation>({} as IPostTranslation);
+  const [defaultGeneralDataCN, setDefaultGeneralDataCN] =
+    useState<IPostTranslation>({} as IPostTranslation);
+  const [defaultCategories, setDefaultCategories] = useState<string[]>([]);
+  const [hotTopic, setHotTopic] = useState<boolean>(false);
 
+  const [checkedPublish, setCheckedPublish] = useState<string>();
+  const [defaultThumbnail, setDefaultThumbnail] = useState<Blob>();
   const [thumbnail, setThumbnail] = useState<RcFile>();
   const [author, setAuthor] = useState<string>("");
   const [generalDataEN, setGeneralDataEN] = useState<IPostTranslation>(
@@ -50,7 +60,7 @@ export default function CreatePost() {
       message.error("Please enter author");
       flag = false;
     }
-    if (selectedCategories.length === 0) {
+    if (!selectedCategories.length) {
       message.error("Please choose category");
       flag = false;
     }
@@ -76,22 +86,21 @@ export default function CreatePost() {
     }
     return flag;
   };
-  const handleCreatePost = async (state: PostStateEnum) => {
+  const handleEditPost = async () => {
     try {
       if (!checkValidate()) return;
-      const dataCreatePost = {
+      const postId: string = location.pathname.split("/").pop() as string;
+      const dataEditPost = {
         author,
-        state,
+        state: checkedPublish,
         categories: selectedCategories.map((item) => item.name),
-        hot_topic: false,
+        hot_topic: hotTopic,
         translations: [generalDataEN, generalDataCN],
       };
 
-      const resCreatePost = await PostsService.createPost({
-        ...dataCreatePost,
+      await PostsService.updatePostById(postId, {
+        ...dataEditPost,
       } as IPost);
-
-      const postId = resCreatePost.data._id;
 
       const formData = new FormData();
       // @ts-ignore
@@ -113,16 +122,17 @@ export default function CreatePost() {
       const formDataCN = new FormData();
       formDataEN.append("file", blobEN, `${postId}_EN.html`);
       formDataCN.append("file", blobCN, `${postId}_CN.html`);
-      await PostsService.saveContentFile(
+      await PostsService.updateContentFile(
         postId,
         LanguagesEnum.ENGLISH,
         formDataEN
       );
-      await PostsService.saveContentFile(
+      await PostsService.updateContentFile(
         postId,
         LanguagesEnum.CHINESE,
         formDataCN
       );
+
       message.success("Create post successfully");
       navigate("/posts");
     } catch (error) {
@@ -131,14 +141,90 @@ export default function CreatePost() {
       message.error(error.message);
     }
   };
+  const fetchPost = async () => {
+    try {
+      const resPost = await PostsService.getPostById(
+        location.pathname.split("/").pop() as string
+      );
+
+      if (resPost.status === 200) {
+        setCheckedPublish(resPost.data.state);
+        setHotTopic(resPost.data.hot_topic as boolean);
+        setDefaultAuthor(resPost.data.author);
+        setThumbnail(
+          import.meta.env.VITE_BASE_URL_API.replace(
+            "api",
+            resPost.data.thumbnail_path
+          )
+        );
+        const transEN = resPost.data.translations.find(
+          (item: IPostTranslation) => item.language === LanguagesEnum.ENGLISH
+        );
+        setDefaultGeneralDataEN(transEN);
+        const transCN = resPost.data.translations.find(
+          (item: IPostTranslation) => item.language === LanguagesEnum.CHINESE
+        );
+        setDefaultGeneralDataCN(transCN);
+        setDefaultCategories(resPost.data.categories);
+
+        const pathThumb = import.meta.env.VITE_BASE_URL_API.replace(
+          "api",
+          resPost.data.thumbnail_path
+        );
+        const blob = await fetch(pathThumb).then((res) => res.blob());
+        setDefaultThumbnail(blob);
+
+        if (transEN) {
+          const pathHTML = import.meta.env.VITE_BASE_URL_API.replace(
+            "api",
+            transEN.path
+          );
+
+          const htmlEN: string = await fetch(pathHTML).then((res) =>
+            res.text()
+          );
+          //  get content in body
+          let contentEN = "";
+          if (htmlEN)
+            // @ts-ignore
+            contentEN = htmlEN?.split("<body>").pop().split("</body>")[0];
+
+          setContentEN(contentEN);
+          setDefaultContentEN(contentEN);
+        }
+        if (transCN) {
+          const pathHTML = import.meta.env.VITE_BASE_URL_API.replace(
+            "api",
+            transCN.path
+          );
+
+          const htmlCN: string = await fetch(pathHTML).then((res) =>
+            res.text()
+          );
+          //  get content in body
+          let contentCN = "";
+          if (htmlCN)
+            // @ts-ignore
+            contentCN = htmlCN?.split("<body>").pop().split("</body>")[0];
+          setContentCN(contentCN);
+          setDefaultContentCN(contentCN);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   useEffect(() => {
+    if (!location.pathname.split("/").pop()) return;
+
     fetchCategories();
-  }, []);
+    fetchPost();
+  }, [location.pathname]);
   return (
     <div className={styles.wrapper}>
       <div className={styles.header}>
         <div className="flex justifyBetween alignCenter">
-          <h1>New Post</h1>
+          <h1>Edit Post</h1>
           <div className="flex gap10">
             <button
               className="inactiveBtn"
@@ -148,18 +234,30 @@ export default function CreatePost() {
             >
               Cancel
             </button>
-            <button
-              className="secondaryBtn"
-              onClick={() => {
-                handleCreatePost(PostStateEnum.DRAFT);
-              }}
-            >
-              Save As Draft
-            </button>
+            <div className="flex gap10 alignCenter">
+              <p>Published</p>
+              <Switch
+                checked={checkedPublish === PostStateEnum.PUBLISHED}
+                onChange={(checked) => {
+                  setCheckedPublish(
+                    checked ? PostStateEnum.PUBLISHED : PostStateEnum.DRAFT
+                  );
+                }}
+              />
+            </div>
+            <div className="flex gap10 alignCenter">
+              <p>Hot Topic</p>
+              <Switch
+                checked={hotTopic}
+                onChange={(checked) => {
+                  setHotTopic(checked);
+                }}
+              />
+            </div>
             <button
               className="primaryBtn"
               onClick={() => {
-                handleCreatePost(PostStateEnum.PUBLISHED);
+                handleEditPost();
               }}
             >
               Submit
@@ -172,6 +270,11 @@ export default function CreatePost() {
         <Col xs={24} lg={18}>
           <div className={styles.generalInfo}>
             <GeneralInformation
+              defaultAuthor={defaultAuthor}
+              defaultGeneralDataEN={defaultGeneralDataEN}
+              defaultGeneralDataCN={defaultGeneralDataCN}
+              // @ts-ignore
+              defaultThumbnail={defaultThumbnail}
               setGeneralDataEN={setGeneralDataEN}
               setGeneralDataCN={setGeneralDataCN}
               lang={lang}
@@ -183,7 +286,7 @@ export default function CreatePost() {
           <div className={styles.detailPost}>
             {lang === LanguagesEnum.ENGLISH && (
               <TipTapRichText
-                defaultContent={contentEN}
+                defaultContent={defaultContentEN}
                 content={contentEN}
                 setContent={(htmlData) => {
                   setContentEN(htmlData);
@@ -192,7 +295,7 @@ export default function CreatePost() {
             )}
             {lang === LanguagesEnum.CHINESE && (
               <TipTapRichText
-                defaultContent={contentEN}
+                defaultContent={defaultContentCN}
                 content={contentCN}
                 setContent={(htmlData) => {
                   setContentCN(htmlData);
@@ -205,6 +308,7 @@ export default function CreatePost() {
           <div className={styles.categories}>
             <div className={styles.tableCategories}>
               <TableCategories
+                defaultCategories={defaultCategories}
                 selectedCategories={selectedCategories}
                 setSelectedCategories={setSelectedCategories}
                 categories={categories}

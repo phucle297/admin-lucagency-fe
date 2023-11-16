@@ -9,6 +9,7 @@ import Users from "@pages/Users";
 import CreateUser from "@pages/CreateUser";
 import Posts from "@pages/Posts";
 import CreatePost from "@pages/CreatePost";
+import EditPost from "@pages/EditPost";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
             <Route path="users/create" element={<CreateUser />} />
             <Route path="posts" element={<Posts />} />
             <Route path="posts/create" element={<CreatePost />} />
+            <Route path="posts/edit/:id" element={<EditPost />} />
 
             <Route path="*" element={<div>Not found</div>} />
           </Route>
