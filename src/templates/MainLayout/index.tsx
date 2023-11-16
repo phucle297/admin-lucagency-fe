@@ -64,7 +64,7 @@ export default function MainLayout() {
         <Menu
           mode="inline"
           selectedKeys={selectedKeys}
-          onSelect={({ key }) => {
+          onClick={({ key }) => {
             setSelectedKeys([key]);
             navigate(`/${key}`);
           }}

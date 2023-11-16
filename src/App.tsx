@@ -1,17 +1,31 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import MainLayout from "@templates/MainLayout";
+/* eslint-disable react-hooks/exhaustive-deps */
 import Contacts from "@pages/Contacts";
-import Pricing from "@pages/Pricing";
+import CreatePost from "@pages/CreatePost";
 import CreatePricing from "@pages/CreatePricing";
+import CreateUser from "@pages/CreateUser";
+import EditPost from "@pages/EditPost";
 import EditPricing from "@pages/EditPricing";
 import Login from "@pages/Login";
-import Users from "@pages/Users";
-import CreateUser from "@pages/CreateUser";
 import Posts from "@pages/Posts";
-import CreatePost from "@pages/CreatePost";
-import EditPost from "@pages/EditPost";
+import Pricing from "@pages/Pricing";
+import Users from "@pages/Users";
+import { useGlobalStore } from "@stores/globalStore";
+import MainLayout from "@templates/MainLayout";
+import { useEffect } from "react";
+import { BrowserRouter, Route, Routes, redirect } from "react-router-dom";
 
 function App() {
+  const getWhoAmI = useGlobalStore((state) => state.getWhoAmI);
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      redirect("/login");
+    } else {
+      getWhoAmI().catch(console.log);
+      redirect("/posts");
+    }
+  }, []);
+
   return (
     <>
       <BrowserRouter>

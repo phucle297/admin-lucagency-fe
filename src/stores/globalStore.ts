@@ -4,6 +4,7 @@ import { IPost } from "@interfaces/posts.interface";
 import { IProduct } from "@interfaces/products.interface";
 import { IUser } from "@interfaces/users.interface";
 import { IResponseDataStatus } from "@interfaces/utils.interface";
+import { AuthService } from "@services/auth.service";
 import { ContactsService } from "@services/contacts.service";
 import { PostsService } from "@services/posts.service";
 import { ProductsService } from "@services/product.service";
@@ -12,6 +13,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 export interface IGlobalStore {
+  whoAmI: any;
   contacts: IContact[];
   users: IUser[];
   products: IProduct[];
@@ -39,10 +41,12 @@ export interface IGlobalStore {
     language: string | undefined
   ) => Promise<IResponseDataStatus>;
   deletePost: (postId: string) => Promise<IResponseDataStatus>;
+  getWhoAmI: () => Promise<IResponseDataStatus>;
 }
 export const useGlobalStore = create(
   persist<IGlobalStore>(
     (set) => ({
+      whoAmI: {},
       users: [],
       contacts: [],
       products: [],
@@ -135,6 +139,12 @@ export const useGlobalStore = create(
           const posts = state.posts.filter((post) => post._id !== postId);
           return { ...state, posts };
         });
+        return res;
+      },
+      getWhoAmI: async () => {
+        const res = await AuthService.whoAmI();
+        console.log(res);
+        set({ whoAmI: res.data });
         return res;
       },
     }),

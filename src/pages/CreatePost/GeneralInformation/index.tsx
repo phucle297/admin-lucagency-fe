@@ -11,6 +11,7 @@ import { useFormik } from "formik";
 import { FC, useEffect, useState } from "react";
 import styles from "./index.module.scss";
 import TextArea from "antd/es/input/TextArea";
+import { useGlobalStore } from "@stores/globalStore";
 
 interface IGeneralInformationProps {
   setGeneralDataEN: (generalDataEN: IPostTranslation) => void;
@@ -28,6 +29,7 @@ const GeneralInformation: FC<IGeneralInformationProps> = ({
   setAuthor,
   setThumbnail,
 }) => {
+  const whoAmI = useGlobalStore((state) => state.whoAmI);
   const [fileList, setFileList] = useState<any[]>([]);
   const formik = useFormik({
     initialValues: {
@@ -102,6 +104,9 @@ const GeneralInformation: FC<IGeneralInformationProps> = ({
     },
   };
 
+  useEffect(() => {
+    formik.setFieldValue("author", whoAmI?.name);
+  }, [whoAmI]);
   return (
     <div className={styles.wrapper}>
       <h2 className="mb10">General Information</h2>
@@ -117,6 +122,7 @@ const GeneralInformation: FC<IGeneralInformationProps> = ({
         <Form.Item name="name">
           <div>
             <Input
+              disabled
               onBlur={formik.handleBlur}
               onChange={formik.handleChange}
               value={formik.values.author}
