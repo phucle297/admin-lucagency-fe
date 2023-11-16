@@ -1,19 +1,22 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import Contacts from "@pages/Contacts";
-import CreatePost from "@pages/CreatePost";
-import CreatePricing from "@pages/CreatePricing";
-import CreateUser from "@pages/CreateUser";
-import Customers from "@pages/Customers";
-import EditPost from "@pages/EditPost";
-import EditPricing from "@pages/EditPricing";
-import Login from "@pages/Login";
-import Posts from "@pages/Posts";
-import Pricing from "@pages/Pricing";
-import Users from "@pages/Users";
+
 import { useGlobalStore } from "@stores/globalStore";
-import MainLayout from "@templates/MainLayout";
-import { useEffect, useState } from "react";
+import { Suspense, lazy, useEffect, useState } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+
+const Invoice = lazy(() => import("@pages/Invoices"));
+const Login = lazy(() => import("@pages/Login"));
+const MainLayout = lazy(() => import("@templates/MainLayout"));
+const Contacts = lazy(() => import("@pages/Contacts"));
+const Pricing = lazy(() => import("@pages/Pricing"));
+const CreatePricing = lazy(() => import("@pages/CreatePricing"));
+const EditPricing = lazy(() => import("@pages/EditPricing"));
+const Users = lazy(() => import("@pages/Users"));
+const CreateUser = lazy(() => import("@pages/CreateUser"));
+const Posts = lazy(() => import("@pages/Posts"));
+const CreatePost = lazy(() => import("@pages/CreatePost"));
+const EditPost = lazy(() => import("@pages/EditPost"));
+const Customers = lazy(() => import("@pages/Customers"));
 
 function App() {
   const getWhoAmI = useGlobalStore((state) => state.getWhoAmI);
@@ -32,24 +35,26 @@ function App() {
   return (
     <>
       <BrowserRouter>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/" element={<MainLayout />}>
-            <Route path="contacts" element={<Contacts />} />
-            <Route path="pricing" element={<Pricing />} />
-            <Route path="pricing/create" element={<CreatePricing />} />
-            <Route path="pricing/edit/:id" element={<EditPricing />} />
-            <Route path="users" element={<Users />} />
-            <Route path="users/create" element={<CreateUser />} />
-            <Route path="posts" element={<Posts />} />
-            <Route path="posts/create" element={<CreatePost />} />
-            <Route path="posts/edit/:id" element={<EditPost />} />
-            <Route path="customers" element={<Customers />} />
-
-            <Route path="/" element={<Navigate to={path} />} />
-            <Route path="*" element={<div>Not found</div>} />
-          </Route>
-        </Routes>
+        <Suspense fallback={<p> Loading...</p>}>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/" element={<MainLayout />}>
+              <Route path="contacts" element={<Contacts />} />
+              <Route path="pricing" element={<Pricing />} />
+              <Route path="pricing/create" element={<CreatePricing />} />
+              <Route path="pricing/edit/:id" element={<EditPricing />} />
+              <Route path="users" element={<Users />} />
+              <Route path="users/create" element={<CreateUser />} />
+              <Route path="posts" element={<Posts />} />
+              <Route path="posts/create" element={<CreatePost />} />
+              <Route path="posts/edit/:id" element={<EditPost />} />
+              <Route path="customers" element={<Customers />} />
+              <Route path="invoices" element={<Invoice />} />
+              <Route path="/" element={<Navigate to={path} />} />
+              <Route path="*" element={<div>Not found</div>} />
+            </Route>
+          </Routes>
+        </Suspense>
       </BrowserRouter>
     </>
   );

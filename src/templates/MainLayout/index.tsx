@@ -86,12 +86,12 @@ export default function MainLayout() {
               label: "Pricing",
             },
             {
-              key: "invoice",
+              key: "invoices",
               icon: (
                 <img
                   className={`${styles.img} ${styles.imgInvoice}`}
                   src={sidebar5}
-                  alt="invoice"
+                  alt="invoices"
                 />
               ),
               label: "Invoice",
