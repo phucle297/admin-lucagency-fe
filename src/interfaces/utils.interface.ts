@@ -6,5 +6,9 @@ export interface IResponseDataStatus {
     page?: number;
     total?: number;
     total_page?: number;
+    accountants?: number;
+    content?: number;
+    sales?: number;
+    seo?: number;
   };
 }

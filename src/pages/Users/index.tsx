@@ -13,6 +13,7 @@ import { UsersService } from "@services/users.service";
 import { useWidth } from "@hooks/useWidth";
 import { useDisclosure } from "@hooks/useDisclosure";
 import ModalEditUsers from "./ModalEditUsers";
+import { ITotalList } from "@constants/totalList";
 
 export default function Users() {
   const width = useWidth();
@@ -25,6 +26,7 @@ export default function Users() {
   const [listUsers, setListUsers] = useState<IUser[]>([]);
   const modalEditUser = useDisclosure();
   const [selectedRow, setSelectedRow] = useState<IUser>({} as IUser);
+  const [listTotal, setListTotal] = useState<ITotalList>({} as ITotalList);
   const columns = [
     {
       title: "Name",
@@ -110,6 +112,19 @@ export default function Users() {
       res?.data.map((item: IUser) => ({ ...item, key: item?._id })) as IUser[]
     );
     setTotal(res.extras?.total as number);
+
+    const accountants = res.extras?.accountants as number;
+    const content = res.extras?.content as number;
+    const sales = res.extras?.sales as number;
+    const seo = res.extras?.seo as number;
+    const total = accountants + content + sales + seo;
+    setListTotal({
+      accountants,
+      content,
+      sales,
+      seo,
+      total,
+    });
   };
   useEffect(() => {
     fetchApi(1, 10).catch(console.log);
@@ -155,7 +170,7 @@ export default function Users() {
                 setTab(UserRolesEnum.ALL);
               }}
             >
-              All users
+              All users ({listTotal.total})
             </button>
             <button
               className={
@@ -165,7 +180,7 @@ export default function Users() {
                 setTab(UserRolesEnum.ACCOUNTANT);
               }}
             >
-              Accountant
+              Accountant ({listTotal.accountants})
             </button>
             <button
               className={
@@ -175,7 +190,7 @@ export default function Users() {
                 setTab(UserRolesEnum.SALE);
               }}
             >
-              Sale
+              Sale ({listTotal.sales})
             </button>
             <button
               className={
@@ -185,7 +200,7 @@ export default function Users() {
                 setTab(UserRolesEnum.SEO);
               }}
             >
-              Seo
+              Seo ({listTotal.seo})
             </button>
             <button
               className={
@@ -195,7 +210,7 @@ export default function Users() {
                 setTab(UserRolesEnum.CONTENT);
               }}
             >
-              Content
+              Content ({listTotal.content})
             </button>
           </div>
         )}
