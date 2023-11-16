@@ -20,6 +20,7 @@ function App() {
   const [path, setPath] = useState<string>("");
   useEffect(() => {
     const token = localStorage.getItem("token");
+    if (location.pathname === "/login") return;
     if (!token) {
       setPath("/login");
     } else {

@@ -11,6 +11,8 @@ import styles from "./index.module.scss";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { UsersService } from "@services/users.service";
 import { useWidth } from "@hooks/useWidth";
+import { useDisclosure } from "@hooks/useDisclosure";
+import ModalEditUsers from "./ModalEditUsers";
 
 export default function Users() {
   const width = useWidth();
@@ -21,6 +23,8 @@ export default function Users() {
   const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
   const [page, setPage] = useState<number>(1);
   const [listUsers, setListUsers] = useState<IUser[]>([]);
+  const modalEditUser = useDisclosure();
+  const [selectedRow, setSelectedRow] = useState<IUser>({} as IUser);
   const columns = [
     {
       title: "Name",
@@ -60,7 +64,7 @@ export default function Users() {
       fixed: "right",
       width: 100,
 
-      render: (_: unknown, record: unknown) => {
+      render: (_: unknown, record: IUser) => {
         return (
           <div className={styles.action}>
             <Space>
@@ -88,8 +92,8 @@ export default function Users() {
               <EditOutlined
                 className={styles.icon}
                 onClick={() => {
-                  // @ts-ignore
-                  navigate(`/users/edit/${record?._id}`);
+                  setSelectedRow(record);
+                  modalEditUser.onOpen();
                 }}
               />
             </Space>
@@ -105,7 +109,6 @@ export default function Users() {
       // @ts-ignore
       res?.data.map((item: IUser) => ({ ...item, key: item?._id })) as IUser[]
     );
-    console.log(res);
     setTotal(res.extras?.total as number);
   };
   useEffect(() => {
@@ -301,6 +304,15 @@ export default function Users() {
         // @ts-ignore
         columns={columns}
         rowSelection={rowSelection}
+      />
+
+      <ModalEditUsers
+        isOpen={modalEditUser.isOpen}
+        handleOpen={modalEditUser.handleOpen}
+        selectedRow={selectedRow}
+        callApi={() => {
+          fetchApi(page, 10).catch(console.log);
+        }}
       />
     </div>
   );
