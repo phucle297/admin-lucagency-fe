@@ -1,21 +1,20 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
+import { useWidth } from "@hooks/useWidth";
 import avatar from "@images/avatar.png";
 import logo from "@images/logo.png";
 import sidebar1 from "@images/sidebar1.png";
-import sidebar2 from "@images/sidebar2.png";
 import sidebar3 from "@images/sidebar3.png";
 import sidebar4 from "@images/sidebar4.png";
 import sidebar5 from "@images/sidebar5.png";
 import sidebar6 from "@images/sidebar6.png";
 import sidebar7 from "@images/sidebar7.png";
+import { AuthService } from "@services/auth.service";
 import type { MenuProps } from "antd";
 import { Button, Dropdown, Layout, Menu } from "antd";
 import { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import styles from "./index.module.scss";
-import { useWidth } from "@hooks/useWidth";
-import { AuthService } from "@services/auth.service";
 
 export default function MainLayout() {
   const [collapsed, setCollapsed] = useState<boolean>(false);
@@ -73,11 +72,6 @@ export default function MainLayout() {
               key: "posts",
               icon: <img className={styles.img} src={sidebar1} alt="posts" />,
               label: "Posts",
-            },
-            {
-              key: "pages",
-              icon: <img className={styles.img} src={sidebar2} alt="pages" />,
-              label: "Pages",
             },
             {
               key: "contacts",
