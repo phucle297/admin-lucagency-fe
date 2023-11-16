@@ -183,7 +183,7 @@ export default function CreatePost() {
           <div className={styles.detailPost}>
             {lang === LanguagesEnum.ENGLISH && (
               <TipTapRichText
-                defaultContent={contentEN}
+                defaultContent={""}
                 content={contentEN}
                 setContent={(htmlData) => {
                   setContentEN(htmlData);
@@ -192,7 +192,7 @@ export default function CreatePost() {
             )}
             {lang === LanguagesEnum.CHINESE && (
               <TipTapRichText
-                defaultContent={contentEN}
+                defaultContent={""}
                 content={contentCN}
                 setContent={(htmlData) => {
                   setContentCN(htmlData);

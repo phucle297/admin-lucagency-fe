@@ -3,6 +3,7 @@ import Contacts from "@pages/Contacts";
 import CreatePost from "@pages/CreatePost";
 import CreatePricing from "@pages/CreatePricing";
 import CreateUser from "@pages/CreateUser";
+import Customers from "@pages/Customers";
 import EditPost from "@pages/EditPost";
 import EditPricing from "@pages/EditPricing";
 import Login from "@pages/Login";
@@ -11,18 +12,19 @@ import Pricing from "@pages/Pricing";
 import Users from "@pages/Users";
 import { useGlobalStore } from "@stores/globalStore";
 import MainLayout from "@templates/MainLayout";
-import { useEffect } from "react";
-import { BrowserRouter, Route, Routes, redirect } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
 function App() {
   const getWhoAmI = useGlobalStore((state) => state.getWhoAmI);
+  const [path, setPath] = useState<string>("");
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
-      redirect("/login");
+      setPath("/login");
     } else {
       getWhoAmI().catch(console.log);
-      redirect("/posts");
+      setPath("/posts");
     }
   }, []);
 
@@ -41,7 +43,9 @@ function App() {
             <Route path="posts" element={<Posts />} />
             <Route path="posts/create" element={<CreatePost />} />
             <Route path="posts/edit/:id" element={<EditPost />} />
+            <Route path="customers" element={<Customers />} />
 
+            <Route path="/" element={<Navigate to={path} />} />
             <Route path="*" element={<div>Not found</div>} />
           </Route>
         </Routes>

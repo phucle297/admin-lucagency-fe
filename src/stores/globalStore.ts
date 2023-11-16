@@ -143,7 +143,6 @@ export const useGlobalStore = create(
       },
       getWhoAmI: async () => {
         const res = await AuthService.whoAmI();
-        console.log(res);
         set({ whoAmI: res.data });
         return res;
       },
