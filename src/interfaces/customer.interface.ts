@@ -6,10 +6,13 @@ export interface ICustomer {
   name: string;
   email: string;
   company_name: string;
+  country: string;
+  state: string;
+  phone: string;
   telegram: string;
   services: string[];
   message: string;
-  only_consult: boolean;
+  only_consult: false;
   orders: IOrder[];
   sub_total: number;
   total: number;

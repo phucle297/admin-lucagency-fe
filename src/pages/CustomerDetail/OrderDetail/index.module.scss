@@ -1,0 +1,48 @@
+.wrapper {
+  position: relative;
+  background: #fff;
+  margin-bottom: 1rem;
+  padding: 1rem;
+
+  .table {
+    margin-top: 1rem;
+    border: 1px solid #eaecf0;
+    border-radius: 8px;
+
+    .top {
+      padding: 0.75rem;
+      border-bottom: 1px solid #eaecf0;
+    }
+    .bottom {
+      padding: 0.75rem;
+
+      background: #f9fafb;
+    }
+  }
+
+  .table2 {
+    border-radius: 8px;
+    border: 1px solid #eaecf0;
+    margin-top: 1rem;
+    div {
+      width: 100%;
+
+      p {
+        width: 100%;
+        padding: 0.75rem;
+      }
+
+      .bgGray,
+      .bgGrayBold {
+        text-align: right;
+        background: #f9fafb;
+      }
+      .bgGrayBold {
+        font-weight: bold;
+      }
+    }
+    div:first-child {
+      border-bottom: 1px solid #eaecf0;
+    }
+  }
+}

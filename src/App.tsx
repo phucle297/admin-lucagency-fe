@@ -17,6 +17,7 @@ const Posts = lazy(() => import("@pages/Posts"));
 const CreatePost = lazy(() => import("@pages/CreatePost"));
 const EditPost = lazy(() => import("@pages/EditPost"));
 const Customers = lazy(() => import("@pages/Customers"));
+const CustomerDetail = lazy(() => import("@pages/CustomerDetail"));
 
 function App() {
   const getWhoAmI = useGlobalStore((state) => state.getWhoAmI);
@@ -49,6 +50,7 @@ function App() {
               <Route path="posts/create" element={<CreatePost />} />
               <Route path="posts/edit/:id" element={<EditPost />} />
               <Route path="customers" element={<Customers />} />
+              <Route path="customers/detail/:id" element={<CustomerDetail />} />
               <Route path="invoices" element={<Invoice />} />
               <Route path="/" element={<Navigate to={path} />} />
               <Route path="*" element={<div>Not found</div>} />
