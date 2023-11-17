@@ -49,6 +49,8 @@
   margin-bottom: 0 !important;
   border-top: 1px solid #999;
   padding: 0 !important;
+  max-height: 80vh;
+  overflow-y: auto;
   > div > div {
     border-radius: 8px;
     padding: 1rem !important;
