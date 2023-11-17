@@ -6,3 +6,11 @@ export enum UserRolesEnum {
   SEO = "seo",
   CONTENT = "content",
 }
+
+export enum UserRolesText {
+  ADMIN = "Administrator",
+  ACCOUNTANT = "Accountant",
+  SALE = "Sale",
+  SEO = "SEO",
+  CONTENT = "Content",
+}

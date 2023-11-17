@@ -15,8 +15,11 @@ import { Button, Dropdown, Layout, Menu } from "antd";
 import { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import styles from "./index.module.scss";
+import { useGlobalStore } from "@stores/globalStore";
+import { UserRolesText } from "@constants/userRoles";
 
 export default function MainLayout() {
+  const whoAmI = useGlobalStore((state) => state.whoAmI);
   const [collapsed, setCollapsed] = useState<boolean>(false);
   const navigate = useNavigate();
   const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
@@ -41,6 +44,9 @@ export default function MainLayout() {
     const key = pathname.split("/")[1];
     setSelectedKeys([key]);
   }, [location.pathname]);
+  useEffect(() => {
+    console.log(whoAmI);
+  }, [whoAmI]);
   return (
     <Layout hasSider className={styles.wrapper}>
       <Layout.Sider
@@ -127,8 +133,14 @@ export default function MainLayout() {
             {!collapsed && (
               <>
                 <div className={styles.info}>
-                  <h3 className={styles.name}>John Doe</h3>
-                  <small className={"fade"}>Administrator</small>
+                  <h3 className={styles.name}>{whoAmI?.name}</h3>
+                  <small className={"fade"}>
+                    {
+                      UserRolesText[
+                        whoAmI?.role?.toUpperCase() as keyof typeof UserRolesText
+                      ]
+                    }
+                  </small>
                 </div>
               </>
             )}
