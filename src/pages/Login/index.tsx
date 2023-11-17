@@ -24,7 +24,7 @@ export default function Login() {
         const res = await AuthService.login({ ...values });
         console.log(res);
 
-        if (res.status === 200 && res?.data?.user?.role === "admin") {
+        if (res.status === 200) {
           message.success("Login successfully");
           localStorage.setItem(LocalStorageKeys.TOKEN, res?.data?.access_token);
           window.location.href = "/posts";

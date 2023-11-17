@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { IInvoice } from "@constants/invoices";
 import { IProduct } from "@interfaces/products.interface";
@@ -9,6 +10,7 @@ const InvoiceDetail: FC = () => {
   const [invoice, setInvoice] = useState<IInvoice>({} as IInvoice);
   const [products, setProducts] = useState<IProduct[]>([] as IProduct[]);
 
+  console.log({ invoice, products });
   const fetchApi = async () => {
     try {
       const productId: string = location.pathname.split("/").pop() as string;
