@@ -5,11 +5,13 @@ import styles from "./index.module.scss";
 import { ICustomer } from "@interfaces/customer.interface";
 import { Divider, message } from "antd";
 import { CustomersService } from "@services/customers.service";
+import { useNavigate } from "react-router-dom";
 interface IOrderDetailProps {
   customer: ICustomer;
   fetchApi: () => void;
 }
 const OrderDetail: FC<IOrderDetailProps> = ({ customer, fetchApi }) => {
+  const navigate = useNavigate();
   return (
     <div className={styles.wrapper}>
       <h1
@@ -73,7 +75,14 @@ const OrderDetail: FC<IOrderDetailProps> = ({ customer, fetchApi }) => {
         >
           Advised
         </button>
-        <button className="primaryBtn w100">Invoice</button>
+        <button
+          className="primaryBtn w100"
+          onClick={() => {
+            navigate(`/invoices/create?customer_id=${customer._id}`);
+          }}
+        >
+          Invoice
+        </button>
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { DeleteOutlined, EditOutlined, EyeOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { IInvoice } from "@constants/invoices";
 import { IResponseDataStatus } from "@interfaces/utils.interface";
 import { InvoiceService } from "@services/invoice.service";
@@ -81,12 +81,6 @@ export default function Invoices() {
                 <DeleteOutlined className={styles.icon} />
               </Popconfirm>
               <EditOutlined
-                className={styles.icon}
-                onClick={() => {
-                  navigate(`/invoices/edit/${record?._id}`);
-                }}
-              />
-              <EyeOutlined
                 className={styles.icon}
                 onClick={() => {
                   navigate(`/invoices/detail/${record?._id}`);

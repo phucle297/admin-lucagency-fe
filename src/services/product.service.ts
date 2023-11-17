@@ -4,7 +4,7 @@ import { RcFile } from "antd/es/upload";
 import HttpInterceptor from "utils/HttpInterceptor";
 
 export class ProductsService {
-  public static async getProducts(page: number, limit: number) {
+  public static async getProducts(page?: number, limit?: number) {
     const response = await HttpInterceptor.get("/products", {
       params: {
         page,

@@ -18,7 +18,8 @@ const CreatePost = lazy(() => import("@pages/CreatePost"));
 const EditPost = lazy(() => import("@pages/EditPost"));
 const Customers = lazy(() => import("@pages/Customers"));
 const CustomerDetail = lazy(() => import("@pages/CustomerDetail"));
-
+const CreateInvoice = lazy(() => import("@pages/CreateInvoice"));
+const InvoiceDetail = lazy(() => import("@pages/InvoiceDetail"));
 function App() {
   const getWhoAmI = useGlobalStore((state) => state.getWhoAmI);
   const [path, setPath] = useState<string>("");
@@ -52,6 +53,8 @@ function App() {
               <Route path="customers" element={<Customers />} />
               <Route path="customers/detail/:id" element={<CustomerDetail />} />
               <Route path="invoices" element={<Invoice />} />
+              <Route path="invoices/create" element={<CreateInvoice />} />
+              <Route path="invoices/detail/:id" element={<InvoiceDetail />} />
               <Route path="/" element={<Navigate to={path} />} />
               <Route path="*" element={<div>Not found</div>} />
             </Route>
