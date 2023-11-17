@@ -44,9 +44,7 @@ export default function MainLayout() {
     const key = pathname.split("/")[1];
     setSelectedKeys([key]);
   }, [location.pathname]);
-  useEffect(() => {
-    console.log(whoAmI);
-  }, [whoAmI]);
+
   return (
     <Layout hasSider className={styles.wrapper}>
       <Layout.Sider

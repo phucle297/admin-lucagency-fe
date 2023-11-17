@@ -125,6 +125,11 @@ input[type="number"] {
   color: #000;
   background: #f2f4f7;
 }
+.tagYellow {
+  @extend .tagGreen;
+  color: #b54708;
+  background: #fffaeb;
+}
 .w100 {
   width: 100%;
 }
