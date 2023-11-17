@@ -96,7 +96,11 @@ export default function Customers() {
                     const Customers = [record._id];
                     await CustomersService.deleteCustomers(Customers);
                     message.success("Delete Customers successfully");
-                    fetchApi(page, 10);
+                    fetchApi(
+                      page,
+                      10,
+                      typeOfCustomer === OnlyConsultEnum.ADVISES
+                    );
                   } catch (error) {
                     console.log(error);
                     message.success("Delete Customers failed");
@@ -121,11 +125,16 @@ export default function Customers() {
     },
   ];
 
-  const fetchApi = async (page: number, limit: number) => {
+  const fetchApi = async (
+    page: number,
+    limit: number,
+    only_consult: boolean
+  ) => {
     try {
       const res: IResponseDataStatus = await CustomersService.getCustomers({
         page,
         limit,
+        only_consult,
       });
       const dataListCustomer: ICustomer[] = res.data as ICustomer[];
       setTotal(res.extras?.total as number);
@@ -142,7 +151,7 @@ export default function Customers() {
     }
   };
   useEffect(() => {
-    fetchApi(1, 10).catch(console.log);
+    fetchApi(1, 10, false).catch(console.log);
   }, []);
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
@@ -167,6 +176,7 @@ export default function Customers() {
             }
             onClick={() => {
               setTypeOfCustomer(OnlyConsultEnum.ORDERS);
+              fetchApi(page, 10, false);
             }}
           >
             Orders
@@ -179,6 +189,7 @@ export default function Customers() {
             }
             onClick={() => {
               setTypeOfCustomer(OnlyConsultEnum.ADVISES);
+              fetchApi(page, 10, true);
             }}
           >
             Advises
@@ -193,7 +204,11 @@ export default function Customers() {
               )
                 .then(() => {
                   void message.success("Delete Customers successfully");
-                  fetchApi(page, 10);
+                  fetchApi(
+                    page,
+                    10,
+                    typeOfCustomer === OnlyConsultEnum.ADVISES
+                  );
                   setSelectedRowKeys([]);
                 })
                 .catch((error) => {
@@ -223,7 +238,11 @@ export default function Customers() {
           pageSize: 10,
           onChange: (page) => {
             setPage(page);
-            fetchApi(page, 10).catch(console.log);
+            fetchApi(
+              page,
+              10,
+              typeOfCustomer === OnlyConsultEnum.ADVISES
+            ).catch(console.log);
           },
         }}
         scroll={{ x: 800 }}
