@@ -142,6 +142,7 @@ export default function CreateUser() {
                     }}
                     value={formik.values.role}
                     options={Object.values(UserRolesEnum)
+                      .filter((item) => item !== UserRolesEnum.ADMIN)
                       .slice(1)
                       .map((item) => ({
                         label: item[0].toUpperCase() + item.slice(1),

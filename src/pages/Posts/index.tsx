@@ -332,13 +332,14 @@ export default function Posts() {
         title: "Path",
         dataIndex: "path",
         key: "path",
-        render: (path: string) => {
+        render: () => {
           return (
             <a
               target="_blank"
-              href={import.meta.env.VITE_BASE_URL_API.replace("api", path)}
+              // href={import.meta.env.VITE_BASE_URL_API.replace("api", path)}
+              href={import.meta.env.VITE_FE_USER_URL + "/blog/" + record._id}
             >
-              {import.meta.env.VITE_BASE_URL_API.replace("api", path)}
+              Go to post
             </a>
           );
         },

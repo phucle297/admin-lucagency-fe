@@ -294,6 +294,14 @@ const GeneralInformation: FC<IGeneralInformationProps> = ({
       </div>
 
       <div className="thumbnailImage">
+        <p
+          style={{
+            fontWeight: "bold",
+            marginBottom: 10,
+          }}
+        >
+          Thumbnail
+        </p>
         <div>
           <Dragger
             {...uploadProps}
