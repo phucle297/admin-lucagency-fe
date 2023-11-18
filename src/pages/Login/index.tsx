@@ -23,16 +23,16 @@ export default function Login() {
     onSubmit: async (values) => {
       try {
         const res = await AuthService.login({ ...values });
-        console.log(res);
-
         if (res.status === 200) {
           message.success("Login successfully");
           localStorage.setItem(LocalStorageKeys.TOKEN, res?.data?.access_token);
-        }
-        if (res.data?.user?.role === UserRolesEnum.SALE) {
-          window.location.href = "/customers";
+          if (res.data?.user?.role === UserRolesEnum.SALE) {
+            window.location.href = "/customers";
+          } else {
+            window.location.href = "/posts";
+          }
         } else {
-          window.location.href = "/posts";
+          message.error("Login failed, please try again");
         }
       } catch (error) {
         console.log(error);
@@ -102,7 +102,6 @@ export default function Login() {
         </div>
 
         <button
-          type="submit"
           className="primaryBtn"
           onClick={() => {
             formik.handleSubmit();

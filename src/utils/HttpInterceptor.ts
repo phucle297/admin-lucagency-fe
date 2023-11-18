@@ -25,7 +25,10 @@ function getAxiosInstance() {
       const code = response?.data?.code;
       const statusCode = response?.data?.statusCode || response?.status;
 
-      if (errorMessage === "invalid token" || statusCode === 401) {
+      if (
+        (errorMessage === "invalid token" || statusCode === 401) &&
+        location.pathname !== "/login"
+      ) {
         window.location.href = "/login";
         console.log(`Redirect to login page`);
       }
