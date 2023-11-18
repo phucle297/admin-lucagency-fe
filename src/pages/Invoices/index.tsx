@@ -66,7 +66,7 @@ export default function Invoices() {
                 onConfirm={async () => {
                   try {
                     const invoices = [record._id];
-                    await InvoiceService.deleteInvoices(invoices);
+                    await InvoiceService.deleteInvoices(invoices as string[]);
                     message.success("Delete Invoices successfully");
                     fetchApi(page, 10);
                   } catch (error) {
