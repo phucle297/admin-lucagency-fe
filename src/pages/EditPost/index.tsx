@@ -60,28 +60,88 @@ export default function EditPost() {
       message.error("Please enter author");
       flag = false;
     }
-    if (!selectedCategories.length) {
+    if (selectedCategories.length === 0) {
       message.error("Please choose category");
       flag = false;
     }
-    if (!generalDataEN.title || !generalDataEN.description) {
+    if (!thumbnail) {
+      message.error("Please choose thumbnail");
+      flag = false;
+    }
+
+    if (
+      (!generalDataEN.title || !generalDataEN.description) &&
+      (!generalDataCN.title || !generalDataCN.description)
+    ) {
       message.error(
-        "Please enter Title and Description of General Information English"
+        "Please enter Title and Description of GeneralInfomation at least one language"
       );
       flag = false;
     }
-    if (!generalDataCN.title || !generalDataCN.description) {
+
+    if (
+      (!contentEN || contentEN === "<p></p>") &&
+      (!contentCN || contentCN === "<p></p>")
+    ) {
+      message.error("Please enter content at least one language");
+      flag = false;
+    }
+    if (
+      contentEN &&
+      contentEN !== "<p></p>" &&
+      (!generalDataEN.title || !generalDataEN.description)
+    ) {
       message.error(
-        "Please enter Title and Description of General Information Chinese"
+        "Please enter Title and Description of GeneralInfomation EN if you want to enter content detail post"
       );
       flag = false;
     }
-    if (!contentEN) {
-      message.error("Please enter content English");
+    if (
+      contentCN &&
+      contentCN !== "<p></p>" &&
+      (!generalDataCN.title || !generalDataCN.description)
+    ) {
+      message.error(
+        "Please enter Title and Description of GeneralInfomation CN if you want to enter content detail post"
+      );
       flag = false;
     }
-    if (!contentCN) {
-      message.error("Please enter content Chinese");
+
+    if (
+      generalDataEN.title &&
+      generalDataEN.description &&
+      (!contentEN || contentEN === "<p></p>")
+    ) {
+      message.error(
+        "Please enter content EN after enter Title and Description of GeneralInfomation EN"
+      );
+      flag = false;
+    }
+    if (
+      generalDataCN.title &&
+      generalDataCN.description &&
+      (!contentCN || contentCN === "<p></p>")
+    ) {
+      message.error(
+        "Please enter content CN after enter Title and Description of GeneralInfomation CN"
+      );
+      flag = false;
+    }
+
+    if (generalDataEN.title && !generalDataEN.description) {
+      message.error("Please enter description EN if you entered title EN");
+      flag = false;
+    }
+    if (generalDataEN.description && !generalDataEN.title) {
+      message.error("Please enter title EN if you entered description EN");
+      flag = false;
+    }
+    if (generalDataCN.title && !generalDataCN.description) {
+      message.error("Please enter description CN if you entered title CN");
+      flag = false;
+    }
+    if (generalDataCN.description && !generalDataCN.title) {
+      message.error("Please enter title CN if you entered description CN");
       flag = false;
     }
     return flag;
@@ -95,7 +155,9 @@ export default function EditPost() {
         state: checkedPublish,
         categories: selectedCategories.map((item) => item.name),
         hot_topic: hotTopic,
-        translations: [generalDataEN, generalDataCN],
+        translations: [generalDataEN, generalDataCN].filter(
+          (item) => item.title
+        ),
       };
 
       await PostsService.updatePostById(postId, {
@@ -122,17 +184,37 @@ export default function EditPost() {
       const formDataCN = new FormData();
       formDataEN.append("file", blobEN, `${postId}_EN.html`);
       formDataCN.append("file", blobCN, `${postId}_CN.html`);
-      await PostsService.updateContentFile(
-        postId,
-        LanguagesEnum.ENGLISH,
-        formDataEN
-      );
-      await PostsService.updateContentFile(
-        postId,
-        LanguagesEnum.CHINESE,
-        formDataCN
-      );
+      if (contentEN && contentEN !== "<p></p>") {
+        if (defaultContentEN === "" || defaultContentEN === "<p></p>") {
+          await PostsService.saveContentFile(
+            postId,
+            LanguagesEnum.ENGLISH,
+            formDataEN
+          );
+        } else {
+          await PostsService.updateContentFile(
+            postId,
+            LanguagesEnum.ENGLISH,
+            formDataEN
+          );
+        }
+      }
 
+      if (contentCN && contentCN !== "<p></p>") {
+        if (defaultContentCN === "" || defaultContentCN === "<p></p>") {
+          await PostsService.saveContentFile(
+            postId,
+            LanguagesEnum.CHINESE,
+            formDataCN
+          );
+        } else {
+          await PostsService.updateContentFile(
+            postId,
+            LanguagesEnum.CHINESE,
+            formDataCN
+          );
+        }
+      }
       message.success("Create post successfully");
       navigate("/posts");
     } catch (error) {

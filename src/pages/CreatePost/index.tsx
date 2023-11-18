@@ -4,22 +4,21 @@
 import TipTapRichText from "@components/TipTapRichText";
 import { LanguagesEnum } from "@constants/languagues";
 import { PostStateEnum } from "@constants/posts";
-import { DEFAULT_HTML_DATA } from "@constants/utils";
 import { ICategory } from "@interfaces/categories.interface";
 import { IPost, IPostTranslation } from "@interfaces/posts.interface";
 import { CategoriesService } from "@services/categories.service";
 import { PostsService } from "@services/posts.service";
 import { Col, Row, message } from "antd";
+import { RcFile } from "antd/es/upload";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import GeneralInformation from "./GeneralInformation";
 import TableCategories from "./TableCategories";
 import styles from "./index.module.scss";
-import { RcFile } from "antd/es/upload";
 
 export default function CreatePost() {
-  const [contentEN, setContentEN] = useState(DEFAULT_HTML_DATA);
-  const [contentCN, setContentCN] = useState(DEFAULT_HTML_DATA);
+  const [contentEN, setContentEN] = useState("");
+  const [contentCN, setContentCN] = useState("");
 
   const [thumbnail, setThumbnail] = useState<RcFile>();
   const [author, setAuthor] = useState<string>("");
@@ -54,24 +53,84 @@ export default function CreatePost() {
       message.error("Please choose category");
       flag = false;
     }
-    if (!generalDataEN.title || !generalDataEN.description) {
+    if (!thumbnail) {
+      message.error("Please choose thumbnail");
+      flag = false;
+    }
+
+    if (
+      (!generalDataEN.title || !generalDataEN.description) &&
+      (!generalDataCN.title || !generalDataCN.description)
+    ) {
       message.error(
-        "Please enter Title and Description of General Information English"
+        "Please enter Title and Description of GeneralInfomation at least one language"
       );
       flag = false;
     }
-    if (!generalDataCN.title || !generalDataCN.description) {
+
+    if (
+      (!contentEN || contentEN === "<p></p>") &&
+      (!contentCN || contentCN === "<p></p>")
+    ) {
+      message.error("Please enter content at least one language");
+      flag = false;
+    }
+    if (
+      contentEN &&
+      contentEN !== "<p></p>" &&
+      (!generalDataEN.title || !generalDataEN.description)
+    ) {
       message.error(
-        "Please enter Title and Description of General Information Chinese"
+        "Please enter Title and Description of GeneralInfomation EN if you want to enter content detail post"
       );
       flag = false;
     }
-    if (!contentEN) {
-      message.error("Please enter content English");
+    if (
+      contentCN &&
+      contentCN !== "<p></p>" &&
+      (!generalDataCN.title || !generalDataCN.description)
+    ) {
+      message.error(
+        "Please enter Title and Description of GeneralInfomation CN if you want to enter content detail post"
+      );
       flag = false;
     }
-    if (!contentCN) {
-      message.error("Please enter content Chinese");
+
+    if (
+      generalDataEN.title &&
+      generalDataEN.description &&
+      (!contentEN || contentEN === "<p></p>")
+    ) {
+      message.error(
+        "Please enter content EN after enter Title and Description of GeneralInfomation EN"
+      );
+      flag = false;
+    }
+    if (
+      generalDataCN.title &&
+      generalDataCN.description &&
+      (!contentCN || contentCN === "<p></p>")
+    ) {
+      message.error(
+        "Please enter content CN after enter Title and Description of GeneralInfomation CN"
+      );
+      flag = false;
+    }
+
+    if (generalDataEN.title && !generalDataEN.description) {
+      message.error("Please enter description EN if you entered title EN");
+      flag = false;
+    }
+    if (generalDataEN.description && !generalDataEN.title) {
+      message.error("Please enter title EN if you entered description EN");
+      flag = false;
+    }
+    if (generalDataCN.title && !generalDataCN.description) {
+      message.error("Please enter description CN if you entered title CN");
+      flag = false;
+    }
+    if (generalDataCN.description && !generalDataCN.title) {
+      message.error("Please enter title CN if you entered description CN");
       flag = false;
     }
     return flag;
@@ -84,7 +143,9 @@ export default function CreatePost() {
         state,
         categories: selectedCategories.map((item) => item.name),
         hot_topic: false,
-        translations: [generalDataEN, generalDataCN],
+        translations: [generalDataEN, generalDataCN].filter(
+          (item) => item.title
+        ),
       };
 
       const resCreatePost = await PostsService.createPost({
@@ -113,16 +174,19 @@ export default function CreatePost() {
       const formDataCN = new FormData();
       formDataEN.append("file", blobEN, `${postId}_EN.html`);
       formDataCN.append("file", blobCN, `${postId}_CN.html`);
-      await PostsService.saveContentFile(
-        postId,
-        LanguagesEnum.ENGLISH,
-        formDataEN
-      );
-      await PostsService.saveContentFile(
-        postId,
-        LanguagesEnum.CHINESE,
-        formDataCN
-      );
+      if (contentEN && contentEN !== "<p></p>")
+        await PostsService.saveContentFile(
+          postId,
+          LanguagesEnum.ENGLISH,
+          formDataEN
+        );
+      if (contentCN && contentCN !== "<p></p>")
+        await PostsService.saveContentFile(
+          postId,
+          LanguagesEnum.CHINESE,
+          formDataCN
+        );
+
       message.success("Create post successfully");
       navigate("/posts");
     } catch (error) {
