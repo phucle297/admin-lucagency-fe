@@ -224,7 +224,7 @@ export default function Contacts() {
               key: "values",
               align: "center",
               render: (
-                values: string | ITelegramInTable,
+                _: string | ITelegramInTable,
                 recordMini: IContactInTable
               ) => {
                 // @ts-ignore
