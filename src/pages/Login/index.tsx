@@ -7,6 +7,7 @@ import { useState } from "react";
 import { AuthService } from "@services/auth.service";
 import * as Yup from "yup";
 import styles from "./index.module.scss";
+import { UserRolesEnum } from "@constants/userRoles";
 
 export default function Login() {
   const [isShowPassword, setIsShowPassword] = useState(false);
@@ -27,6 +28,10 @@ export default function Login() {
         if (res.status === 200) {
           message.success("Login successfully");
           localStorage.setItem(LocalStorageKeys.TOKEN, res?.data?.access_token);
+        }
+        if (res.data?.user?.role === UserRolesEnum.SALE) {
+          window.location.href = "/customers";
+        } else {
           window.location.href = "/posts";
         }
       } catch (error) {

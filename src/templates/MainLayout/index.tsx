@@ -16,7 +16,7 @@ import { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import styles from "./index.module.scss";
 import { useGlobalStore } from "@stores/globalStore";
-import { UserRolesText } from "@constants/userRoles";
+import { UserRolesEnum, UserRolesText } from "@constants/userRoles";
 
 export default function MainLayout() {
   const whoAmI = useGlobalStore((state) => state.whoAmI);
@@ -24,6 +24,25 @@ export default function MainLayout() {
   const navigate = useNavigate();
   const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
   const width = useWidth();
+  const checkDisabled = (key: string) => {
+    if (whoAmI?.role === UserRolesEnum.ADMIN) {
+      return false;
+    }
+    if (whoAmI?.role === UserRolesEnum.SEO) {
+      if (key === "posts") return false;
+      return true;
+    }
+    if (whoAmI?.role === UserRolesEnum.SALE) {
+      if (key === "customers" || key === "invoices") return false;
+      return true;
+    }
+    if (whoAmI?.role === UserRolesEnum.ACCOUNTANT) {
+      if (key === "contacts" || key === "users") return true;
+      return false;
+    }
+    return true;
+  };
+
   const items: MenuProps["items"] = [
     {
       label: (
@@ -76,6 +95,7 @@ export default function MainLayout() {
               key: "posts",
               icon: <img className={styles.img} src={sidebar1} alt="posts" />,
               label: "Posts",
+              disabled: checkDisabled("posts"),
             },
             {
               key: "contacts",
@@ -83,11 +103,13 @@ export default function MainLayout() {
                 <img className={styles.img} src={sidebar3} alt="contacts" />
               ),
               label: "Contacts",
+              disabled: checkDisabled("contacts"),
             },
             {
               key: "pricing",
               icon: <img className={styles.img} src={sidebar4} alt="pricing" />,
               label: "Pricing",
+              disabled: checkDisabled("pricing"),
             },
             {
               key: "invoices",
@@ -99,6 +121,7 @@ export default function MainLayout() {
                 />
               ),
               label: "Invoice",
+              disabled: checkDisabled("invoices"),
             },
             {
               key: "customers",
@@ -106,11 +129,13 @@ export default function MainLayout() {
                 <img className={styles.img} src={sidebar6} alt="customers" />
               ),
               label: "Customers",
+              disabled: checkDisabled("invoices"),
             },
             {
               key: "users",
               icon: <img className={styles.img} src={sidebar7} alt="users" />,
               label: "Users",
+              disabled: checkDisabled("users"),
             },
           ]}
         />
