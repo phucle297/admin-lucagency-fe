@@ -55,10 +55,6 @@ export default function Pricing() {
 
       render: (nation: string) => {
         switch (nation) {
-          case NationEnum.RANDOM:
-            return <p>Random</p>;
-          case NationEnum.ASIA:
-            return <p>Asia</p>;
           case NationEnum.AUSTRALIA:
             return (
               <img
@@ -75,12 +71,8 @@ export default function Pricing() {
             return (
               <img src={flagIndia} alt="flagIndia" className={styles.flag} />
             );
-          case NationEnum.NORTH_AMERICA:
-            return <p>North America</p>;
-          case NationEnum.SOUTH_AMERICA:
-            return <p>South America</p>;
           default:
-            return <></>;
+            return <p>{nation}</p>;
         }
       },
     },
