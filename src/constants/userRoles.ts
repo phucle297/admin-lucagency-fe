@@ -4,7 +4,6 @@ export enum UserRolesEnum {
   ACCOUNTANT = "accountant",
   SALE = "sale",
   SEO = "seo",
-  CONTENT = "content",
 }
 
 export enum UserRolesText {
@@ -12,5 +11,4 @@ export enum UserRolesText {
   ACCOUNTANT = "Accountant",
   SALE = "Sale",
   SEO = "SEO",
-  CONTENT = "Content",
 }

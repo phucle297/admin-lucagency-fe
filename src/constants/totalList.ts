@@ -1,7 +1,6 @@
 export interface ITotalListUser {
   total: number;
   accountants: number;
-  content: number;
   sales: number;
   seo: number;
 }

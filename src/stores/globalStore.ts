@@ -30,6 +30,7 @@ export interface IGlobalStore {
   getUsers: (
     page: number,
     limit: number,
+    search: string,
     role?: string
   ) => Promise<IResponseDataStatus>;
   getPosts: (
@@ -109,8 +110,13 @@ export const useGlobalStore = create(
         });
         return res;
       },
-      getUsers: async (page: number, limit: number, role?: string) => {
-        const res = await UsersService.getUsers(page, limit, role);
+      getUsers: async (
+        page: number,
+        limit: number,
+        search: string,
+        role?: string
+      ) => {
+        const res = await UsersService.getUsers(page, limit, search, role);
         set({ products: res.data });
         return res;
       },

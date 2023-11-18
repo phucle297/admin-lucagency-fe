@@ -14,8 +14,8 @@ export interface IInvoice {
 }
 
 export interface IInvoiceOrderProduct {
-  quantity: number;
+  quantity: string;
   service: string;
-  price: number;
-  adjust: number;
+  price: string;
+  adjust: string;
 }

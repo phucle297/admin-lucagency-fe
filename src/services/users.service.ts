@@ -6,9 +6,14 @@ export class UsersService {
     const response = await HttpInterceptor.post("/users", { ...params });
     return response;
   }
-  public static async getUsers(page: number, limit: number, role?: string) {
+  public static async getUsers(
+    page: number,
+    limit: number,
+    search: string,
+    role?: string
+  ) {
     const response = await HttpInterceptor.get("/users", {
-      params: { page, limit, role },
+      params: { page, limit, search, role },
     });
     return response;
   }

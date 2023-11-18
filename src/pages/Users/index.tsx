@@ -1,19 +1,26 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { UserRolesEnum } from "@constants/userRoles";
-import { IUser } from "@interfaces/users.interface";
-import { useGlobalStore } from "@stores/globalStore";
-import { Popconfirm, Space, Table, message } from "antd";
-import { IResponseDataStatus } from "interfaces/utils.interface";
-import { Key, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import styles from "./index.module.scss";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { UsersService } from "@services/users.service";
-import { useWidth } from "@hooks/useWidth";
-import { useDisclosure } from "@hooks/useDisclosure";
-import ModalEditUsers from "./ModalEditUsers";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
+import { IParamsUser } from "@constants/params";
 import { ITotalListUser } from "@constants/totalList";
+import { UserRolesEnum } from "@constants/userRoles";
+import { useDisclosure } from "@hooks/useDisclosure";
+import { useWidth } from "@hooks/useWidth";
+import { IUser } from "@interfaces/users.interface";
+import { UsersService } from "@services/users.service";
+import { useGlobalStore } from "@stores/globalStore";
+import { Input, Popconfirm, Space, Table, message } from "antd";
+import { IResponseDataStatus } from "interfaces/utils.interface";
+import { Key, useCallback, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import ModalEditUsers from "./ModalEditUsers";
+import styles from "./index.module.scss";
+import { useFormik } from "formik";
+import _ from "lodash";
 
 export default function Users() {
   const width = useWidth();
@@ -24,9 +31,22 @@ export default function Users() {
   const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
   const [page, setPage] = useState<number>(1);
   const [listUsers, setListUsers] = useState<IUser[]>([]);
+  const [params, setParams] = useState<IParamsUser>({
+    search: undefined,
+  });
   const modalEditUser = useDisclosure();
   const [selectedRow, setSelectedRow] = useState<IUser>({} as IUser);
-  const [listTotal, setListTotal] = useState<ITotalListUser>({} as ITotalListUser);
+  const [listTotal, setListTotal] = useState<ITotalListUser>(
+    {} as ITotalListUser
+  );
+  const formik = useFormik({
+    initialValues: {
+      search: "",
+    },
+    onSubmit: (values) => {
+      console.log(values);
+    },
+  });
   const columns = [
     {
       title: "Name",
@@ -79,7 +99,7 @@ export default function Users() {
                     const users = [record._id];
                     await UsersService.deleteUsers(users);
                     message.success("Delete user successfully");
-                    fetchApi(page, 10);
+                    fetchApi(page, 10, params.search as string);
                   } catch (error) {
                     console.log(error);
                     message.success("Delete user failed");
@@ -105,8 +125,13 @@ export default function Users() {
     },
   ];
 
-  const fetchApi = async (page: number, limit: number, role?: string) => {
-    const res: IResponseDataStatus = await getUsers(page, limit, role);
+  const fetchApi = async (
+    page: number,
+    limit: number,
+    search: string,
+    role?: string
+  ) => {
+    const res: IResponseDataStatus = await getUsers(page, limit, search, role);
     setListUsers(
       // @ts-ignore
       res?.data.map((item: IUser) => ({ ...item, key: item?._id })) as IUser[]
@@ -114,32 +139,31 @@ export default function Users() {
     setTotal(res.extras?.total as number);
 
     const accountants = res.extras?.accountants as number;
-    const content = res.extras?.content as number;
     const sales = res.extras?.sales as number;
     const seo = res.extras?.seo as number;
-    const total = accountants + content + sales + seo;
+    const total = accountants + sales + seo;
     setListTotal({
       accountants,
-      content,
       sales,
       seo,
       total,
     });
   };
   useEffect(() => {
-    fetchApi(1, 10).catch(console.log);
+    fetchApi(1, 10, "").catch(console.log);
   }, []);
   useEffect(() => {
+    setPage(1);
     if (tab === UserRolesEnum.ALL) {
-      fetchApi(1, 10).catch(console.log);
+      fetchApi(1, 10, params.search as string).catch(console.log);
       return;
     } else {
-      fetchApi(1, 10, tab).catch((error) => {
+      fetchApi(1, 10, params.search as string, tab).catch((error) => {
         console.log(error);
         setListUsers([]);
       });
     }
-  }, [tab]);
+  }, [params, tab]);
 
   const onSelectChange = (newSelectedRowKeys: Key[]) => {
     setSelectedRowKeys(newSelectedRowKeys);
@@ -149,6 +173,12 @@ export default function Users() {
     selectedRowKeys,
     onChange: onSelectChange,
   };
+  const debounceUpdateParams = useCallback(
+    _.debounce((params) => {
+      setParams(params);
+    }, 200),
+    []
+  );
 
   return (
     <div className={styles.wrapper}>
@@ -202,16 +232,6 @@ export default function Users() {
             >
               Seo ({listTotal.seo})
             </button>
-            <button
-              className={
-                tab === UserRolesEnum.CONTENT ? "activeBtn" : "inactiveBtn"
-              }
-              onClick={() => {
-                setTab(UserRolesEnum.CONTENT);
-              }}
-            >
-              Content ({listTotal.content})
-            </button>
           </div>
         )}
         <div className={styles.controls}>
@@ -224,7 +244,7 @@ export default function Users() {
               )
                 .then(() => {
                   void message.success("Delete users successfully");
-                  fetchApi(page, 10);
+                  fetchApi(page, 10, params.search as string);
                   setSelectedRowKeys([]);
                 })
                 .catch((error) => {
@@ -293,25 +313,39 @@ export default function Users() {
           >
             Seo
           </button>
-          <button
-            className={
-              tab === UserRolesEnum.CONTENT ? "activeBtn" : "inactiveBtn"
-            }
-            onClick={() => {
-              setTab(UserRolesEnum.CONTENT);
-            }}
-          >
-            Content
-          </button>
         </div>
       )}
+      <div>
+        <p
+          style={{
+            fontWeight: "bold",
+          }}
+        >
+          Search
+        </p>
+        <div className={styles.searchBar}>
+          <Input
+            onBlur={formik.handleBlur}
+            onChange={(e) => {
+              formik.setFieldValue("search", e.target.value);
+              debounceUpdateParams({
+                ...params,
+                search: e.target.value,
+              });
+            }}
+            value={formik.values.search}
+            name="search"
+          />
+          <SearchOutlined className={styles.searchIcon} />
+        </div>
+      </div>
       <Table
         pagination={{
           total,
           pageSize: 10,
           onChange: (page) => {
             setPage(page);
-            fetchApi(page, 10).catch(console.log);
+            fetchApi(page, 10, params.search as string).catch(console.log);
           },
         }}
         scroll={{ x: 1000 }}
@@ -326,7 +360,7 @@ export default function Users() {
         handleOpen={modalEditUser.handleOpen}
         selectedRow={selectedRow}
         callApi={() => {
-          fetchApi(page, 10).catch(console.log);
+          fetchApi(page, 10, params.search as string).catch(console.log);
         }}
       />
     </div>

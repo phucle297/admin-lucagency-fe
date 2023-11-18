@@ -1,12 +1,13 @@
+import { IInvoiceOrderProduct } from "@constants/invoices";
 import { ICustomer } from "@interfaces/customer.interface";
 import { IProduct } from "@interfaces/products.interface";
+import { Col, Divider, Form, Input, Row } from "antd";
+import TextArea from "antd/es/input/TextArea";
 import dayjs from "dayjs";
 import { useFormik } from "formik";
-import { FC, useEffect } from "react";
+import { FC, useEffect, useState } from "react";
 import * as Yup from "yup";
 import styles from "./index.module.scss";
-import { Col, Form, Input, Row } from "antd";
-import TextArea from "antd/es/input/TextArea";
 
 interface IInvoiceDetailProps {
   customer: ICustomer;
@@ -14,6 +15,10 @@ interface IInvoiceDetailProps {
 }
 
 const InvoiceDetail: FC<IInvoiceDetailProps> = ({ customer }) => {
+  const [listFieldProducts, setListFieldProducts] = useState<
+    IInvoiceOrderProduct[]
+  >([]);
+
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
@@ -27,6 +32,9 @@ const InvoiceDetail: FC<IInvoiceDetailProps> = ({ customer }) => {
     validationSchema: Yup.object({
       invoice_number: Yup.string().required("Required"),
       order_number: Yup.string().required("Required"),
+      paid: Yup.string().required("Required"),
+      tax: Yup.string().required("Required"),
+      customer_contact_info: Yup.string().required("Required"),
     }),
     onSubmit: async (values) => {
       console.log(values);
@@ -34,6 +42,7 @@ const InvoiceDetail: FC<IInvoiceDetailProps> = ({ customer }) => {
   });
 
   useEffect(() => {
+    if (!customer?._id) return;
     const customerContactInfo =
       customer?.name +
       "\n" +
@@ -180,22 +189,99 @@ const InvoiceDetail: FC<IInvoiceDetailProps> = ({ customer }) => {
             >
               Customer Contact Info
             </p>
-            <Form.Item name="paid">
+            <Form.Item name="customer_contact_info">
               <div>
                 <TextArea
+                  rows={5}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  value={formik.values?.paid}
-                  name="paid"
+                  value={formik.values?.customer_contact_info}
+                  name="customer_contact_info"
                 />
-                {formik.errors?.paid && formik.touched?.paid && (
-                  <p className="error">{formik.errors?.paid}</p>
-                )}
+                {formik.errors?.customer_contact_info &&
+                  formik.touched?.customer_contact_info && (
+                    <p className="error">
+                      {formik.errors?.customer_contact_info}
+                    </p>
+                  )}
               </div>
             </Form.Item>
           </div>
         </Col>
       </Row>
+
+      <Divider />
+
+      {listFieldProducts.map((item, index) => {
+        return (
+          <div className={styles.inputGroup}>
+            <Row gutter={20}>
+              <Col xs={24} lg={6}>
+                <p
+                  style={{
+                    fontWeight: "bold",
+                    marginBottom: 10,
+                  }}
+                >
+                  Hrs/Qty
+                </p>
+                <Form.Item name="quantity">
+                  <div>
+                    <Input
+                      type="number"
+                      onChange={(e) => {
+                        const newList = [...listFieldProducts];
+                        console.log(e.target.value);
+                        newList[index].quantity = e.target.value;
+                        setListFieldProducts(newList);
+                      }}
+                      value={item?.quantity}
+                      name="service"
+                    />
+                  </div>
+                </Form.Item>
+              </Col>
+              <Col xs={24} lg={6}>
+                <p
+                  style={{
+                    fontWeight: "bold",
+                    marginBottom: 10,
+                  }}
+                >
+                  Service
+                </p>
+                <Form.Item name="service">
+                  <div>
+                    <Input
+                      onChange={(e) => {
+                        const newList = [...listFieldProducts];
+                        newList[index].service = e.target.value;
+                        setListFieldProducts(newList);
+                      }}
+                      value={item?.service}
+                      name="service"
+                    />
+                  </div>
+                </Form.Item>
+              </Col>
+            </Row>
+          </div>
+        );
+      })}
+      <button
+        className="w100 primaryBtn"
+        onClick={() => {
+          const newProduct: IInvoiceOrderProduct = {
+            quantity: "",
+            service: "",
+            price: "",
+            adjust: "",
+          };
+          setListFieldProducts([...listFieldProducts, newProduct]);
+        }}
+      >
+        + Add new product
+      </button>
     </div>
   );
 };

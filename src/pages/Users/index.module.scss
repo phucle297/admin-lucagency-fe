@@ -41,3 +41,17 @@
     text-wrap: nowrap;
   }
 }
+.searchBar {
+  position: relative;
+  margin-bottom: 1rem;
+  input {
+    padding-left: 2.5rem !important;
+  }
+  .searchIcon {
+    position: absolute;
+    top: 50%;
+    left: 1rem;
+    transform: translateY(-50%);
+    color: #0000008a;
+  }
+}

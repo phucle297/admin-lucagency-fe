@@ -14,16 +14,17 @@ const CreateInvoice: FC = () => {
 
   const fetchApi = async () => {
     try {
-      const customerId: string = location.search?.split("=").pop() as string;
-      const resCustomer = await CustomersService.getCustomerById(customerId);
       const resProd = await ProductsService.getProducts();
-      setCustomer({
-        ...resCustomer.data,
-        key: resCustomer.data.id,
-      });
       setProducts({
         ...resProd.data,
         key: resProd.data.id,
+      });
+      if (!location.search) return;
+      const customerId: string = location.search?.split("=").pop() as string;
+      const resCustomer = await CustomersService.getCustomerById(customerId);
+      setCustomer({
+        ...resCustomer.data,
+        key: resCustomer.data.id,
       });
     } catch (error) {
       console.log(error);
