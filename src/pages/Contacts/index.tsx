@@ -4,10 +4,16 @@ import { nanoid } from "nanoid";
 import { IGlobalStore, useGlobalStore } from "@stores/globalStore";
 import styles from "./index.module.scss";
 import { useEffect, useState } from "react";
-import { IContact, IContactInTable } from "@interfaces/contacts.interface";
+import {
+  IContact,
+  IContactInTable,
+  ITelegramInTable,
+} from "@interfaces/contacts.interface";
 import { useDisclosure } from "@hooks/useDisclosure";
 import { ContactTypes } from "@constants/contactTypes";
 import {
+  CheckOutlined,
+  CloseOutlined,
   EditOutlined,
   EnvironmentOutlined,
   MailOutlined,
@@ -153,7 +159,7 @@ export default function Contacts() {
           date: item.updated_at,
           values: item.values,
           display: item.display,
-        };
+        } as IContactInTable;
       })
     );
   };
@@ -161,39 +167,137 @@ export default function Contacts() {
     fetchApi().catch(console.log);
   }, []);
   const expandedRowRender = (record: IContactInTable) => {
-    const columns = [
-      {
-        title: "Type",
-        dataIndex: "type",
-        key: "type",
-        width: 200,
-        render: (type: string) => {
-          switch (type) {
-            case ContactTypes.HOTLINE:
-              return <PhoneOutlined />;
-            case ContactTypes.WHATS_APP:
-              return <WhatsAppOutlined />;
-            case ContactTypes.EMAIL_SUPPORT:
-              return <MailOutlined />;
-            case ContactTypes.TELEGRAM:
-              return (
-                <img
-                  src={telegram}
-                  alt="telegram"
-                  className={styles.telegram}
-                />
-              );
-            case ContactTypes.ADDRESS:
-              return <EnvironmentOutlined />;
-            case ContactTypes.SKYPE:
-              return <SkypeOutlined />;
-            default:
-              return null;
-          }
-        },
-      },
-      { title: "Values", dataIndex: "value", key: "value" },
-    ];
+    const columns =
+      record?.type?.toLowerCase() === ContactTypes.TELEGRAM
+        ? [
+            {
+              title: "",
+              dataIndex: "type",
+              key: "type",
+              width: 200,
+              render: (type: string) => {
+                type = type?.toLowerCase()?.replace(" ", "_");
+                switch (type) {
+                  case ContactTypes.HOTLINE:
+                    return <PhoneOutlined />;
+                  case ContactTypes.WHATS_APP:
+                    return <WhatsAppOutlined />;
+                  case ContactTypes.EMAIL_SUPPORT:
+                    return <MailOutlined />;
+                  case ContactTypes.TELEGRAM:
+                    return (
+                      <img
+                        src={telegram}
+                        alt="telegram"
+                        className={styles.telegram}
+                      />
+                    );
+                  case ContactTypes.ADDRESS:
+                    return <EnvironmentOutlined />;
+                  case ContactTypes.SKYPE:
+                    return <SkypeOutlined />;
+                  default:
+                    return null;
+                }
+              },
+            },
+            {
+              title: "",
+              dataIndex: "values",
+              key: "values",
+              width: 300,
+              render: (
+                values: string | ITelegramInTable,
+                recordMini: IContactInTable
+              ) => {
+                if (record?.type?.toLowerCase() === ContactTypes.TELEGRAM) {
+                  // @ts-ignore
+                  return <p>{recordMini?.values?.data as string}</p>;
+                }
+
+                return <p>{values as string}</p>;
+              },
+            },
+            {
+              title: "",
+              dataIndex: "values",
+              key: "values",
+              align: "center",
+              render: (
+                values: string | ITelegramInTable,
+                recordMini: IContactInTable
+              ) => {
+                // @ts-ignore
+                if (recordMini?.values?.blue_check) {
+                  return (
+                    <CheckOutlined
+                      style={{
+                        color: "green",
+                      }}
+                    />
+                  );
+                } else {
+                  return (
+                    <CloseOutlined
+                      style={{
+                        color: "red",
+                      }}
+                    />
+                  );
+                }
+              },
+            },
+          ]
+        : [
+            {
+              title: "",
+              dataIndex: "type",
+              key: "type",
+              width: 200,
+              render: (type: string) => {
+                type = type?.toLowerCase()?.replace(" ", "_");
+                switch (type) {
+                  case ContactTypes.HOTLINE:
+                    return <PhoneOutlined />;
+                  case ContactTypes.WHATS_APP:
+                    return <WhatsAppOutlined />;
+                  case ContactTypes.EMAIL_SUPPORT:
+                    return <MailOutlined />;
+                  case ContactTypes.TELEGRAM:
+                    return (
+                      <img
+                        src={telegram}
+                        alt="telegram"
+                        className={styles.telegram}
+                      />
+                    );
+                  case ContactTypes.ADDRESS:
+                    return <EnvironmentOutlined />;
+                  case ContactTypes.SKYPE:
+                    return <SkypeOutlined />;
+                  default:
+                    return null;
+                }
+              },
+            },
+            {
+              title: "",
+              dataIndex: "values",
+              key: "values",
+              render: (
+                values: string | ITelegramInTable,
+                recordMini: IContactInTable
+              ) => {
+                if (record?.type?.toLowerCase() === ContactTypes.TELEGRAM) {
+                  // @ts-ignore
+                  return <p>{recordMini?.values?.data as string}</p>;
+                }
+
+                return <p>{values as string}</p>;
+              },
+            },
+          ];
+
     const data = [];
     // @ts-ignore
     for (let i = 0; i < record?.values?.length; ++i) {
@@ -201,10 +305,11 @@ export default function Contacts() {
         data.push({
           key: nanoid(),
           type: record.type,
-          value: record?.values[i],
+          values: record?.values[i],
         });
       }
     }
+    // @ts-ignore
     return <Table columns={columns} dataSource={data} pagination={false} />;
   };
   return (

@@ -7,12 +7,16 @@ export interface IContact {
   updated_at: string;
 }
 
+export interface ITelegramInTable {
+  data?: string;
+  blue_check?: boolean;
+}
 export interface IContactInTable {
   _id?: string;
   key: string;
   amount: number;
   type: string;
   date: string;
-  values?: unknown[];
+  values?: string[] | ITelegramInTable[];
   display?: boolean;
 }

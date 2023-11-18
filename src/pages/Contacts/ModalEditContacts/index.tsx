@@ -1,4 +1,5 @@
-import { Input, Modal } from "antd";
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+import { Input, Modal, Switch } from "antd";
 import { IContactInTable } from "interfaces/contacts.interface";
 import { FC, ReactNode, useEffect, useState } from "react";
 import styles from "./index.module.scss";
@@ -30,34 +31,42 @@ const ModalEditContacts: FC<IModalEditContactsProps> = ({
   const updateContacts = useGlobalStore((state) => state.updateContacts);
   const [title, setTitle] = useState<string>("");
   const [icon, setIcon] = useState<ReactNode>(null);
+  const [type, setType] = useState<string>("");
   useEffect(() => {
     setListContacts(selectedRow?.values as string[]);
-    switch (selectedRow?.type) {
+    const type = selectedRow?.type?.toLowerCase().replace(" ", "_");
+    switch (type) {
       case ContactTypes.HOTLINE:
         setIcon(<PhoneOutlined className={styles.iconLeft} />);
         setTitle("Edit Hotline");
+        setType(ContactTypes.HOTLINE);
         break;
       case ContactTypes.WHATS_APP:
         setIcon(<WhatsAppOutlined className={styles.iconLeft} />);
         setTitle("Edit Whats App");
+        setType(ContactTypes.WHATS_APP);
         break;
       case ContactTypes.EMAIL_SUPPORT:
         setIcon(<MailOutlined className={styles.iconLeft} />);
         setTitle("Edit Email Support");
+        setType(ContactTypes.EMAIL_SUPPORT);
         break;
       case ContactTypes.SKYPE:
         setIcon(<SkypeOutlined className={styles.iconLeft} />);
         setTitle("Edit Skype");
+        setType(ContactTypes.SKYPE);
         break;
       case ContactTypes.ADDRESS:
         setIcon(<EnvironmentOutlined className={styles.iconLeft} />);
         setTitle("Edit Address");
+        setType(ContactTypes.ADDRESS);
         break;
       case ContactTypes.TELEGRAM:
         setIcon(
           <img src={telegram} alt="telegram" className={styles.iconLeft} />
         );
         setTitle("Edit Telegram");
+        setType(ContactTypes.TELEGRAM);
         break;
       default:
         break;
@@ -115,7 +124,15 @@ const ModalEditContacts: FC<IModalEditContactsProps> = ({
       <div className={styles.content}>
         <div className="flex justifyBetween alignCenter">
           <small className="fade">Contact Address</small>
-          <small className="fade">Action</small>
+          {type !== ContactTypes.TELEGRAM && (
+            <small className="fade">Action</small>
+          )}
+          {type === ContactTypes.TELEGRAM && (
+            <div className="flex gap10">
+              <small>Blue Check</small>
+              <small className="fade">Action</small>
+            </div>
+          )}
         </div>
       </div>
 
@@ -126,13 +143,45 @@ const ModalEditContacts: FC<IModalEditContactsProps> = ({
               type="text"
               className="input"
               placeholder="Enter contact address"
-              value={contact}
+              // @ts-ignore
+              value={type === ContactTypes.TELEGRAM ? contact?.data : contact}
               onChange={(e) => {
-                const newListContacts = [...listContacts];
-                newListContacts[index] = e.target.value;
-                setListContacts(newListContacts);
+                if (type === ContactTypes.TELEGRAM) {
+                  const newListContacts = [...listContacts];
+                  newListContacts[index] = {
+                    // @ts-ignore
+                    ...contact,
+                    data: e.target.value,
+                  };
+                  setListContacts(newListContacts);
+                } else {
+                  const newListContacts = [...listContacts];
+                  newListContacts[index] = e.target.value;
+                  setListContacts(newListContacts);
+                }
               }}
             />
+            {type === ContactTypes.TELEGRAM && (
+              <Switch
+                style={{
+                  position: "absolute",
+                  right: "3rem",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                }}
+                // @ts-ignore
+                checked={contact?.blue_check}
+                onChange={(checked) => {
+                  const newListContacts = [...listContacts];
+                  newListContacts[index] = {
+                    // @ts-ignore
+                    ...contact,
+                    blue_check: checked,
+                  };
+                  setListContacts(newListContacts);
+                }}
+              />
+            )}
             <DeleteOutlined
               onClick={() => {
                 const newListContacts = [...listContacts];

@@ -13,6 +13,13 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         token: {
           borderRadius: 6,
         },
+        components: {
+          Switch: {
+            colorPrimary: "black",
+            colorPrimaryHover: "black",
+            colorPrimaryBorder: "black",
+          },
+        },
       }}
     >
       <MantineProvider>
