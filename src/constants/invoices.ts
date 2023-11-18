@@ -1,6 +1,7 @@
 export interface IInvoice {
   key?: string;
-  _id: string;
+  _id?: string;
+  invoice_date?: string;
   invoice_number: string;
   order_number: string;
   customer_contact: string;
@@ -14,8 +15,8 @@ export interface IInvoice {
 }
 
 export interface IInvoiceOrderProduct {
-  quantity: string;
+  quantity: string | number;
   service: string;
-  price: string;
-  adjust: string;
+  price: string | number;
+  adjust: string | number;
 }

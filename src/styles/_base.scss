@@ -145,3 +145,10 @@ input[type="number"] {
 .mb10 {
   margin-bottom: 10px;
 }
+.circleBtn {
+  @extend .activeBtn;
+  padding: 0.5rem;
+  border-radius: 50%;
+  width: 2.5rem;
+  height: 2.5rem;
+}
