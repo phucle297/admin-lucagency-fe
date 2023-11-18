@@ -65,7 +65,6 @@ const CreateInvoice: FC = () => {
         customer?.telegram;
 
       formik.setFieldValue("customer_contact_info", customerContactInfo);
-      console.log(customer.created_at);
       formik.setFieldValue("invoice_date", dayjs(customer.created_at).format("YYYY-MM-DD"));
     } catch (error) {
       console.log(error);
@@ -376,7 +375,6 @@ const CreateInvoice: FC = () => {
                             type="number"
                             onChange={(e) => {
                               const newList = [...listFieldProducts];
-                              console.log(e.target.value);
                               newList[index].quantity = e.target.value;
                               setListFieldProducts(newList);
                             }}
