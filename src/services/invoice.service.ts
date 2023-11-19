@@ -6,9 +6,9 @@ export class InvoiceService {
     const response = await HttpInterceptor.post("/invoices", { ...params });
     return response;
   }
-  public static async getInvoices(page: number, limit: number) {
+  public static async getInvoices(page: number, limit: number, { ...params }) {
     const response = await HttpInterceptor.get("/invoices", {
-      params: { page, limit },
+      params: { page, limit, ...params },
     });
     return response;
   }

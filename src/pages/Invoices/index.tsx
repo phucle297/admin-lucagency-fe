@@ -1,12 +1,19 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
 import { IInvoice } from "@constants/invoices";
+import { IParamsSearch } from "@constants/params";
 import { IResponseDataStatus } from "@interfaces/utils.interface";
 import { InvoiceService } from "@services/invoice.service";
-import { Popconfirm, Space, Table, message } from "antd";
+import { Form, Input, Popconfirm, Space, Table, message } from "antd";
 import dayjs from "dayjs";
-import { Key, useEffect, useState } from "react";
+import { useFormik } from "formik";
+import _ from "lodash";
+import { Key, useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styles from "./index.module.scss";
 
@@ -18,7 +25,16 @@ export default function Invoices() {
   const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
   const [total, setTotal] = useState<number>(0);
   const [page, setPage] = useState<number>(1);
+  const [params, setParams] = useState<IParamsSearch>({});
 
+  const formik = useFormik({
+    initialValues: {
+      search: "",
+    },
+    onSubmit: (values) => {
+      console.log(values);
+    },
+  });
   const columns = [
     {
       title: "Invoice Number",
@@ -68,7 +84,7 @@ export default function Invoices() {
                     const invoices = [record._id];
                     await InvoiceService.deleteInvoices(invoices as string[]);
                     message.success("Delete Invoices successfully");
-                    fetchApi(page, 10);
+                    fetchApi(page, 10, params);
                   } catch (error) {
                     console.log(error);
                     message.success("Delete Invoices failed");
@@ -92,12 +108,19 @@ export default function Invoices() {
       },
     },
   ];
+  const debounceUpdateParams = useCallback(
+    _.debounce((params) => {
+      setParams(params);
+    }, 200),
+    []
+  );
 
-  const fetchApi = async (page: number, limit: number) => {
+  const fetchApi = async (page: number, limit: number, { ...params }) => {
     try {
       const res: IResponseDataStatus = await InvoiceService.getInvoices(
         page,
-        limit
+        limit,
+        { ...params }
       );
       const dataListInvoice: IInvoice[] = res.data as IInvoice[];
       setTotal(res.extras?.total as number);
@@ -114,8 +137,20 @@ export default function Invoices() {
     }
   };
   useEffect(() => {
-    fetchApi(1, 10).catch(console.log);
+    fetchApi(1, 10, {}).catch(console.log);
   }, []);
+  useEffect(() => {
+    setPage(1);
+    const formatedParams = {
+      search: params.search,
+    };
+
+    // @ts-ignore
+    fetchApi(1, 10, { ...formatedParams }).catch((error) => {
+      console.log(error);
+      setListInvoice([]);
+    });
+  }, [params]);
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
     setSelectedRowKeys(newSelectedRowKeys);
@@ -128,8 +163,34 @@ export default function Invoices() {
 
   return (
     <div className={styles.wrapper}>
-      <div className="flex justifyBetween alignCenter">
+      <div className="flex justifyBetween alignBaseline">
         <h1>Invoices</h1>
+        <div className={styles.searchAndFilter}>
+          <Form.Item
+            name="search"
+            style={{
+              width: "100%",
+            }}
+          >
+            <div>
+              <div className={styles.searchBar}>
+                <Input
+                  onBlur={formik.handleBlur}
+                  onChange={(e) => {
+                    formik.setFieldValue("search", e.target.value);
+                    debounceUpdateParams({
+                      ...params,
+                      search: e.target.value,
+                    });
+                  }}
+                  value={formik.values.search}
+                  name="search"
+                />
+                <SearchOutlined className={styles.searchIcon} />
+              </div>
+            </div>
+          </Form.Item>
+        </div>
         <div className="flex gap10">
           <Popconfirm
             title="Delete Invoices"
@@ -140,7 +201,7 @@ export default function Invoices() {
               )
                 .then(() => {
                   void message.success("Delete Invoices successfully");
-                  fetchApi(page, 10);
+                  fetchApi(page, 10, params);
                   setSelectedRowKeys([]);
                 })
                 .catch((error) => {
@@ -162,7 +223,6 @@ export default function Invoices() {
               Delete
             </button>
           </Popconfirm>
-
           <button
             className="primaryBtn"
             onClick={() => {
@@ -179,7 +239,7 @@ export default function Invoices() {
           pageSize: 10,
           onChange: (page) => {
             setPage(page);
-            fetchApi(page, 10).catch(console.log);
+            fetchApi(page, 10, params).catch(console.log);
           },
         }}
         scroll={{ x: 800 }}

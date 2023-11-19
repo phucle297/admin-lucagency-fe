@@ -7,6 +7,9 @@ export interface IParamsPost {
   language?: string | undefined;
 }
 
-export interface IParamsUser{
+export interface IParamsUser {
+  search?: string | undefined;
+}
+export interface IParamsSearch {
   search?: string | undefined;
 }
