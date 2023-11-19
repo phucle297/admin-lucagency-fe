@@ -1,6 +1,6 @@
 export interface ITotalListUser {
   total: number;
-  accountants: number;
+  account_executives: number;
   sales: number;
   seo: number;
 }

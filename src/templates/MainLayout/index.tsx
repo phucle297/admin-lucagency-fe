@@ -36,7 +36,7 @@ export default function MainLayout() {
       if (key === "customers" || key === "invoices") return false;
       return true;
     }
-    if (whoAmI?.role === UserRolesEnum.ACCOUNTANT) {
+    if (whoAmI?.role === UserRolesEnum.ACCOUNT_EXECUTIVES) {
       if (key === "contacts" || key === "users") return true;
       return false;
     }

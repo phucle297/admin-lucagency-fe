@@ -161,7 +161,11 @@ const ModalEditUsers: FC<IModalEditUsersProps> = ({
                 }}
                 value={formik.values.role}
                 options={Object.values(UserRolesEnum)
-                  .slice(1)
+                  .filter((item) => {
+                    return (
+                      item !== UserRolesEnum.ADMIN && item !== UserRolesEnum.ALL
+                    );
+                  })
                   .map((item) => ({
                     label: item[0].toUpperCase() + item.slice(1),
                     value: item,

@@ -138,12 +138,12 @@ export default function Users() {
     );
     setTotal(res.extras?.total as number);
 
-    const accountants = res.extras?.accountants as number;
+    const account_executives = res.extras?.account_executives as number;
     const sales = res.extras?.sales as number;
     const seo = res.extras?.seo as number;
-    const total = accountants + sales + seo;
+    const total = account_executives + sales + seo;
     setListTotal({
-      accountants,
+      account_executives,
       sales,
       seo,
       total,
@@ -204,13 +204,15 @@ export default function Users() {
             </button>
             <button
               className={
-                tab === UserRolesEnum.ACCOUNTANT ? "activeBtn" : "inactiveBtn"
+                tab === UserRolesEnum.ACCOUNT_EXECUTIVES
+                  ? "activeBtn"
+                  : "inactiveBtn"
               }
               onClick={() => {
-                setTab(UserRolesEnum.ACCOUNTANT);
+                setTab(UserRolesEnum.ACCOUNT_EXECUTIVES);
               }}
             >
-              Accountant ({listTotal.accountants})
+              Account ({listTotal.account_executives})
             </button>
             <button
               className={
@@ -289,13 +291,15 @@ export default function Users() {
           </button>
           <button
             className={
-              tab === UserRolesEnum.ACCOUNTANT ? "activeBtn" : "inactiveBtn"
+              tab === UserRolesEnum.ACCOUNT_EXECUTIVES
+                ? "activeBtn"
+                : "inactiveBtn"
             }
             onClick={() => {
-              setTab(UserRolesEnum.ACCOUNTANT);
+              setTab(UserRolesEnum.ACCOUNT_EXECUTIVES);
             }}
           >
-            Accountant
+            Account
           </button>
           <button
             className={tab === UserRolesEnum.SALE ? "activeBtn" : "inactiveBtn"}

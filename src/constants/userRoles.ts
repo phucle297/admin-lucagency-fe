@@ -1,14 +1,14 @@
 export enum UserRolesEnum {
   ALL = "All",
   ADMIN = "admin",
-  ACCOUNTANT = "accountant",
+  ACCOUNT_EXECUTIVES = "account",
   SALE = "sale",
   SEO = "seo",
 }
 
 export enum UserRolesText {
   ADMIN = "Administrator",
-  ACCOUNTANT = "Accountant",
+  ACCOUNT_EXECUTIVES = "Account",
   SALE = "Sale",
   SEO = "SEO",
 }
