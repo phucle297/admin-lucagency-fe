@@ -6,17 +6,15 @@ import { IProduct } from "@interfaces/products.interface";
 import generatePdf from "@pages/CreateInvoice/pdfGenerator";
 import { InvoiceService } from "@services/invoice.service";
 import { ProductsService } from "@services/product.service";
-import { Col, Divider, Form, Input, Row, Select, message } from "antd";
+import { Col, Divider, Form, Input, Row, message } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import dayjs from "dayjs";
 import { useFormik } from "formik";
 import { FC, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import styles from "./index.module.scss";
 
 const InvoiceDetail: FC = () => {
-  const navigate = useNavigate();
   const [products, setProducts] = useState<IProduct[]>([] as IProduct[]);
   const [listFieldProducts, setListFieldProducts] = useState<
     IInvoiceOrderProduct[]
@@ -164,11 +162,11 @@ const InvoiceDetail: FC = () => {
         total_due:
           sub_total - Number(formik.values?.paid) - Number(formik.values?.tax),
       };
+      const invoiceId = location.pathname.split("/").pop() as string;
       if (!checkValidate()) return;
       if (type === "save") {
-        await InvoiceService.createInvoice(invoice_data);
-        message.success("Create invoice successfully");
-        navigate("/invoices");
+        await InvoiceService.updateInvoice(invoiceId, invoice_data);
+        message.success("Update invoice successfully");
       } else {
         generatePdf(invoice_data);
       }
@@ -360,7 +358,7 @@ const InvoiceDetail: FC = () => {
                     </button>
                   </div>
                   <Row gutter={20}>
-                    <Col xs={24} lg={6}>
+                    <Col xs={24} lg={3}>
                       <p
                         style={{
                           fontWeight: "bold",
@@ -384,7 +382,7 @@ const InvoiceDetail: FC = () => {
                         </div>
                       </Form.Item>
                     </Col>
-                    <Col xs={24} lg={6}>
+                    <Col xs={24} lg={9}>
                       <p
                         style={{
                           fontWeight: "bold",
@@ -395,12 +393,11 @@ const InvoiceDetail: FC = () => {
                       </p>
                       <Form.Item name="service">
                         <div>
-                          <Select
+                          {/* <Select
                             options={products.map((item) => ({
                               label: item.title,
                               value: item.title,
                             }))}
-                            value={item?.service}
                             onChange={(e) => {
                               const newList = [...listFieldProducts];
                               newList[index].service = e;
@@ -410,6 +407,15 @@ const InvoiceDetail: FC = () => {
                               setListFieldProducts(newList);
                             }}
                             key="service"
+                          /> */}
+                          <Input
+                            onChange={(e) => {
+                              const newList = [...listFieldProducts];
+                              newList[index].service = e.target.value;
+                              setListFieldProducts(newList);
+                            }}
+                            value={item?.service}
+                            name="service"
                           />
                         </div>
                       </Form.Item>
