@@ -23,7 +23,11 @@ export interface IGlobalStore {
     contactId: string,
     { ...params }
   ) => Promise<IResponseDataStatus>;
-  getProducts: (page: number, limit: number) => Promise<IResponseDataStatus>;
+  getProducts: (
+    page: number,
+    limit: number,
+    { ...params }
+  ) => Promise<IResponseDataStatus>;
   createProduct: (body: IProduct) => Promise<IResponseDataStatus>;
   deleteProduct: (listProductIds: string[]) => Promise<IResponseDataStatus>;
   updateProduct: (productId: string, { ...params }) => Promise<any>;
@@ -72,8 +76,10 @@ export const useGlobalStore = create(
         });
         return res;
       },
-      getProducts: async (page: number, limit: number) => {
-        const res = await ProductsService.getProducts(page, limit);
+      getProducts: async (page: number, limit: number, { ...params }) => {
+        const res = await ProductsService.getProducts(page, limit, {
+          ...params,
+        });
         set({ products: res.data });
         return res;
       },

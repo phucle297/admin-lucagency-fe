@@ -13,3 +13,10 @@ export interface IParamsUser {
 export interface IParamsSearch {
   search?: string | undefined;
 }
+
+export interface IParamsPricing{
+  page?: number;
+  limit?: number;
+  search?: string | undefined;
+  category?: string | undefined;
+}

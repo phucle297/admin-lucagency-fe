@@ -1,17 +1,21 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Popconfirm, Space, Table, message } from "antd";
+import { IParamsPricing } from "@constants/params";
+import { IGlobalStore, useGlobalStore } from "@stores/globalStore";
+import { Form, Popconfirm, Select, Space, Table, message } from "antd";
 import flagAustralia from "assets/images/flagAustralia.png";
 import flagEurope from "assets/images/flagEurope.png";
 import flagIndia from "assets/images/flagIndia.png";
 import { NationEnum } from "constants/nation";
 import { IProduct, IProductInTable } from "interfaces/products.interface";
 import { IResponseDataStatus } from "interfaces/utils.interface";
-import { Key, useEffect, useState } from "react";
+import { Key, useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { IGlobalStore, useGlobalStore } from "@stores/globalStore";
 import styles from "./index.module.scss";
+import _ from "lodash";
+import { CategoryEnum } from "@constants/category";
+import { useFormik } from "formik";
 
 export default function Pricing() {
   const navigate = useNavigate();
@@ -26,7 +30,7 @@ export default function Pricing() {
   const [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
   const [total, setTotal] = useState<number>(0);
   const [page, setPage] = useState<number>(1);
-
+  const [params, setParams] = useState<IParamsPricing>({});
   const columns = [
     {
       title: "Title",
@@ -89,6 +93,11 @@ export default function Pricing() {
       title: "Category",
       dataIndex: "category",
       key: "category",
+      render: (text: string) => {
+        return (
+          <p>{text?.[0]?.toUpperCase() + text?.slice(1).replace("_", " ")}</p>
+        );
+      },
     },
     {
       title: "Action",
@@ -112,7 +121,7 @@ export default function Pricing() {
 
                     await deleteProduct(products);
                     message.success("Delete pricing successfully");
-                    fetchApi(page, 10);
+                    fetchApi(page, 10, params);
                   } catch (error) {
                     console.log(error);
                     message.success("Delete pricing failed");
@@ -137,9 +146,24 @@ export default function Pricing() {
       },
     },
   ];
-
-  const fetchApi = async (page: number, limit: number) => {
-    const res: IResponseDataStatus = await getProducts(page, limit);
+  const debounceUpdateParams = useCallback(
+    _.debounce((params) => {
+      setParams(params);
+    }, 200),
+    []
+  );
+  const formik = useFormik({
+    initialValues: {
+      category: "",
+    },
+    onSubmit: (values) => {
+      console.log(values);
+    },
+  });
+  const fetchApi = async (page: number, limit: number, { ...params }) => {
+    const res: IResponseDataStatus = await getProducts(page, limit, {
+      ...params,
+    });
     const dataListProduct: IProduct[] = res.data as IProduct[];
     setTotal(res.extras?.total as number);
     setListProduct(
@@ -159,7 +183,7 @@ export default function Pricing() {
     );
   };
   useEffect(() => {
-    fetchApi(1, 10).catch(console.log);
+    fetchApi(1, 10, {}).catch(console.log);
   }, []);
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
@@ -170,12 +194,58 @@ export default function Pricing() {
     selectedRowKeys,
     onChange: onSelectChange,
   };
+  useEffect(() => {
+    setPage(1);
+    const formatedParams = {
+      page: 1,
+      limit: 10,
+      category: params.category,
+    };
+
+    // @ts-ignore
+    fetchApi(1, 10, { ...formatedParams }).catch((error) => {
+      console.log(error);
+      setListProduct([]);
+    });
+  }, [params]);
 
   return (
     <div className={styles.wrapper}>
       <div className="flex justifyBetween alignCenter">
         <h1>Pricing</h1>
-        <div className="flex gap10">
+
+        <div className={styles.right}>
+          <Form.Item name="category">
+            <div className={styles.formItem}>
+              <p
+                style={{
+                  fontWeight: "bold",
+                }}
+              >
+                Category
+              </p>
+              <Select
+                onBlur={formik.handleBlur}
+                value={formik.values.category}
+                allowClear
+                onChange={(e) => {
+                  formik.setFieldValue("category", e);
+                  debounceUpdateParams({
+                    ...params,
+                    category: e,
+                  });
+                }}
+                key="language"
+                options={Object.values(CategoryEnum).map((item) => {
+                  return {
+                    label:
+                      item[0].toUpperCase() + item.slice(1).replace("_", " "),
+                    value: item,
+                  };
+                })}
+              />
+            </div>
+          </Form.Item>
           <Popconfirm
             title="Delete pricing"
             description="Are you sure to delete?"
@@ -183,7 +253,7 @@ export default function Pricing() {
               Promise.resolve(deleteProduct(selectedRowKeys as string[]))
                 .then(() => {
                   void message.success("Delete pricing successfully");
-                  fetchApi(page, 10);
+                  fetchApi(page, 10, params);
                   setSelectedRowKeys([]);
                 })
                 .catch((error) => {
@@ -222,7 +292,7 @@ export default function Pricing() {
           pageSize: 10,
           onChange: (page) => {
             setPage(page);
-            fetchApi(page, 10).catch(console.log);
+            fetchApi(page, 10, {}).catch(console.log);
           },
         }}
         scroll={{ x: 800 }}

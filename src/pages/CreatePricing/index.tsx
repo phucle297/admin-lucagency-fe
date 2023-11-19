@@ -175,7 +175,9 @@ export default function CreatePricing() {
                     <Select
                       style={{ width: "100%" }}
                       options={Object.values(CategoryEnum).map((item) => ({
-                        label: item,
+                        label:
+                          item[0].toUpperCase() +
+                          item.slice(1).replace("_", " "),
                         value: item,
                       }))}
                       onChange={(e) => {

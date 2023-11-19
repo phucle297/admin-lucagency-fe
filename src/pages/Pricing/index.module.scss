@@ -1,19 +1,36 @@
 .wrapper {
-    padding: 1rem;
-    background: #fff;
-    border-radius: 8px;
+  padding: 1rem;
+  background: #fff;
+  border-radius: 8px;
 
-    h1 {
-        font-weight: 700;
-        line-height: 2;
-        margin-bottom: 1rem;
-    }
-    .icon {
-        cursor: pointer !important;
-    }
+  h1 {
+    font-weight: 700;
+    line-height: 2;
+    margin-bottom: 1rem;
+  }
+  .icon {
+    cursor: pointer !important;
+  }
 }
 
 .flag {
-    width: 2rem;
-    object-fit: cover;
+  width: 2rem;
+  object-fit: cover;
+}
+
+.right {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+
+  button {
+    height: fit-content;
+  }
+
+  .formItem {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    width: 200px;
+  }
 }
