@@ -45,7 +45,7 @@ const CreateInvoice: FC = () => {
   });
   const fetchApi = async () => {
     try {
-      const resProd = await ProductsService.getProducts();
+      const resProd = await ProductsService.getProducts(0, 0, {});
       setProducts([
         ...resProd.data.map((item: IProduct) => ({ ...item, key: item._id })),
       ]);
@@ -65,7 +65,10 @@ const CreateInvoice: FC = () => {
         customer?.telegram;
 
       formik.setFieldValue("customer_contact_info", customerContactInfo);
-      formik.setFieldValue("invoice_date", dayjs(customer.created_at).format("YYYY-MM-DD"));
+      formik.setFieldValue(
+        "invoice_date",
+        dayjs(customer.created_at).format("YYYY-MM-DD")
+      );
     } catch (error) {
       console.log(error);
     }

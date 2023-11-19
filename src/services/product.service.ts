@@ -5,6 +5,15 @@ import HttpInterceptor from "utils/HttpInterceptor";
 
 export class ProductsService {
   public static async getProducts(page: number, limit: number, { ...params }) {
+    if (page === 0 && limit === 0) {
+      const res = await HttpInterceptor.get("/products", {
+        params: {
+          ...params,
+        },
+      });
+      return res;
+    }
+
     const response = await HttpInterceptor.get("/products", {
       params: {
         page,

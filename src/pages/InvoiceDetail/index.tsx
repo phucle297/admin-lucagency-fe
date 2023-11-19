@@ -44,7 +44,7 @@ const InvoiceDetail: FC = () => {
   });
   const fetchApi = async () => {
     try {
-      const resProd = await ProductsService.getProducts();
+      const resProd = await ProductsService.getProducts(0, 0, {});
       setProducts([
         ...resProd.data.map((item: IProduct) => ({ ...item, key: item._id })),
       ]);
