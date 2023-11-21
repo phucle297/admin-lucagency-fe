@@ -7,6 +7,15 @@ import { Form, Popconfirm, Select, Space, Table, message } from "antd";
 import flagAustralia from "assets/images/flagAustralia.png";
 import flagEurope from "assets/images/flagEurope.png";
 import flagIndia from "assets/images/flagIndia.png";
+import flagEngland from "assets/images/flagEngland.png";
+import flagFrance from "assets/images/flagFrance.png";
+import flagGermany from "assets/images/flagGermany.png";
+import flagIndonesia from "assets/images/flagIndonesia.png";
+import flagItalia from "assets/images/flagItalia.png";
+import flagMalaysia from "assets/images/flagMalaysia.png";
+import flagPhilippines from "assets/images/flagIndia.png";
+import flagRussia from "assets/images/flagRussia.png";
+import flagUsa from "assets/images/flagUsa.png";
 import { NationEnum } from "constants/nation";
 import { IProduct, IProductInTable } from "interfaces/products.interface";
 import { IResponseDataStatus } from "interfaces/utils.interface";
@@ -75,6 +84,60 @@ export default function Pricing() {
             return (
               <img src={flagIndia} alt="flagIndia" className={styles.flag} />
             );
+          case NationEnum.ENGLAND:
+            return (
+              <img
+                src={flagEngland}
+                alt="flagEngland"
+                className={styles.flag}
+              />
+            );
+          case NationEnum.FRANCE:
+            return (
+              <img src={flagFrance} alt="flagFrance" className={styles.flag} />
+            );
+          case NationEnum.GERMANY:
+            return (
+              <img
+                src={flagGermany}
+                alt="flagGermany"
+                className={styles.flag}
+              />
+            );
+          case NationEnum.INDONESIA:
+            return (
+              <img
+                src={flagIndonesia}
+                alt="flagIndonesia"
+                className={styles.flag}
+              />
+            );
+          case NationEnum.ITALIA:
+            return (
+              <img src={flagItalia} alt="flagItalia" className={styles.flag} />
+            );
+          case NationEnum.MALAYSIA:
+            return (
+              <img
+                src={flagMalaysia}
+                alt="flagMalaysia"
+                className={styles.flag}
+              />
+            );
+          case NationEnum.PHILIPPINES:
+            return (
+              <img
+                src={flagPhilippines}
+                alt="flagPhilippines"
+                className={styles.flag}
+              />
+            );
+          case NationEnum.RUSSIA:
+            return (
+              <img src={flagRussia} alt="flagRussia" className={styles.flag} />
+            );
+          case NationEnum.USA:
+            return <img src={flagUsa} alt="flagUsa" className={styles.flag} />;
           default:
             return <p>{nation}</p>;
         }
