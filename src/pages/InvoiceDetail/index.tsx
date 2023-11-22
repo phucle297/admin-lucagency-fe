@@ -32,8 +32,6 @@ const InvoiceDetail: FC = () => {
     validationSchema: Yup.object({
       invoice_number: Yup.string().required("Required"),
       order_number: Yup.string().required("Required"),
-      paid: Yup.string().required("Required"),
-      tax: Yup.string().required("Required"),
       customer_contact_info: Yup.string().required("Required"),
     }),
     onSubmit: async (values) => {
@@ -81,8 +79,11 @@ const InvoiceDetail: FC = () => {
       flag = false;
     }
     if (!formik.values?.paid) {
-      message.error('Please enter "Paid"');
-      flag = false;
+      // @ts-ignore
+      if (typeof formik.values?.paid === Number && formik.values?.paid !== 0) {
+        message.error('Please enter "Paid"');
+        flag = false;
+      }
     }
     if (!formik.values?.tax) {
       // @ts-ignore
