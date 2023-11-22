@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable react-hooks/exhaustive-deps */
 import {
+  CopyOutlined,
   DeleteOutlined,
   EditOutlined,
   SearchOutlined,
@@ -100,6 +101,27 @@ export default function Invoices() {
                 className={styles.icon}
                 onClick={() => {
                   navigate(`/invoices/detail/${record?._id}`);
+                }}
+              />
+              <CopyOutlined
+                className={styles.icon}
+                onClick={async () => {
+                  try {
+                    const resIn = await InvoiceService.getInvoiceById(
+                      record?._id as string
+                    );
+                    const dataCreateIn = resIn.data as IInvoice;
+                    delete dataCreateIn._id;
+                    delete dataCreateIn.created_at;
+                    delete dataCreateIn.updated_at;
+                    delete dataCreateIn.__v;
+                    await InvoiceService.createInvoice(dataCreateIn);
+                    message.success("Copy Invoices successfully");
+                    fetchApi(page, 10, params);
+                  } catch (error) {
+                    console.log(error);
+                    message.success("Copy Invoices failed");
+                  }
                 }}
               />
             </Space>

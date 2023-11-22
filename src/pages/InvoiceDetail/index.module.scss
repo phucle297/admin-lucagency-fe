@@ -32,8 +32,8 @@
       font-weight: bold;
     }
   }
-  div:first-child {
-    border-bottom: 1px solid #eaecf0;
+  div:last-child {
+    border-top: 1px solid #eaecf0;
   }
 }
 

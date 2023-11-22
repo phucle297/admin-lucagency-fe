@@ -86,8 +86,11 @@ const CreateInvoice: FC = () => {
       flag = false;
     }
     if (!formik.values?.tax) {
-      message.error('Please enter "Tax"');
-      flag = false;
+      // @ts-ignore
+      if (typeof formik.values?.tax === Number && formik.values?.tax !== 0) {
+        message.error('Please enter "Tax"');
+        flag = false;
+      }
     }
     if (!formik.values?.customer_contact_info) {
       message.error('Please enter "Customer Contact Info"');
@@ -119,13 +122,22 @@ const CreateInvoice: FC = () => {
           miniflag = false;
         }
         if (!item?.service) {
-          miniflag = false;
+          // @ts-ignore
+          if (typeof item?.service === Number && item?.service !== 0) {
+            miniflag = false;
+          }
         }
         if (!item?.price) {
-          miniflag = false;
+          // @ts-ignore
+          if (typeof item?.price === Number && item?.price !== 0) {
+            miniflag = false;
+          }
         }
         if (!item?.adjust) {
-          miniflag = false;
+          // @ts-ignore
+          if (typeof item?.adjust === Number && item?.adjust !== 0) {
+            miniflag = false;
+          }
         }
         if (!miniflag) {
           message.error(`Please enter all field of Product ${index + 1}`);

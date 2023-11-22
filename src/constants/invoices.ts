@@ -1,4 +1,5 @@
 export interface IInvoice {
+  [x: string]: any;
   key?: string;
   _id?: string;
   invoice_date?: string;

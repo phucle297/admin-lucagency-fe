@@ -131,14 +131,17 @@ const Pdf: FC<IPdf> = ({ invoiceData }) => {
           fontWeight: "bold",
         }}
       >
-        To: {invoiceData.customer_contact}
+        To:{" "}
+        {invoiceData.customer_contact.split("\n").map((item: string) => (
+          <p>{item}</p>
+        ))}
       </p>
 
       <table
         border={1}
         style={{
           width: "100%",
-          marginTop: "10px",
+          marginTop: "16px",
           borderCollapse: "collapse",
           textAlign: "right",
         }}
