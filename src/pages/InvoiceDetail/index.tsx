@@ -261,6 +261,7 @@ const InvoiceDetail: FC = () => {
                   <Form.Item name="tax">
                     <div>
                       <Input
+                        type="number"
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                         value={formik.values?.tax}
@@ -310,6 +311,7 @@ const InvoiceDetail: FC = () => {
                   <Form.Item name="paid">
                     <div>
                       <Input
+                        type="number"
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                         value={formik.values?.paid}
@@ -528,14 +530,16 @@ const InvoiceDetail: FC = () => {
               <div>
                 <p>Sub Total</p>
                 <p className={styles.bgGray}>
-                  {listFieldProducts.reduce((total, item) => {
-                    return (
-                      total +
-                      Number(item?.price) *
-                        Number(item?.quantity) *
-                        (1 - Number(item?.adjust) / 100)
-                    );
-                  }, 0)}
+                  {listFieldProducts
+                    .reduce((total, item) => {
+                      return (
+                        total +
+                        Number(item?.price) *
+                          Number(item?.quantity) *
+                          (1 - Number(item?.adjust) / 100)
+                      );
+                    }, 0)
+                    .toFixed(2)}
                 </p>
               </div>
               <div>
@@ -549,17 +553,18 @@ const InvoiceDetail: FC = () => {
               <div>
                 <p>Total due</p>
                 <p className={styles.bgGrayBold}>
-                  {" "}
-                  {listFieldProducts.reduce((total, item) => {
-                    return (
-                      total +
-                      Number(item?.price) *
-                        Number(item?.quantity) *
-                        (1 - Number(item?.adjust) / 100)
-                    );
-                  }, 0) -
+                  {(
+                    listFieldProducts.reduce((total, item) => {
+                      return (
+                        total +
+                        Number(item?.price) *
+                          Number(item?.quantity) *
+                          (1 - Number(item?.adjust) / 100)
+                      );
+                    }, 0) -
                     Number(formik.values.paid) -
-                    Number(formik.values.tax)}
+                    Number(formik.values.tax)
+                  ).toFixed(2)}
                 </p>
               </div>
             </div>
